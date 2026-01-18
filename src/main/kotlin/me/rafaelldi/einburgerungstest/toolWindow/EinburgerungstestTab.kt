@@ -13,12 +13,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import me.rafaelldi.einburgerungstest.MyBundle
 import org.jetbrains.jewel.ui.component.DefaultButton
 import org.jetbrains.jewel.ui.component.OutlinedButton
 import org.jetbrains.jewel.ui.component.Text
 
 @Composable
-internal fun EinburgerungsTestTab(viewModel: EinburgerungsTestViewModel) {
+internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val currentQuestion by viewModel.currentQuestion.collectAsState()
     val selectedAnswerIndex by viewModel.selectedAnswerIndex.collectAsState()
@@ -32,7 +33,7 @@ internal fun EinburgerungsTestTab(viewModel: EinburgerungsTestViewModel) {
                 contentAlignment = Alignment.Center
             ) {
                 DefaultButton(onClick = { viewModel.onLoadQuestions() }) {
-                    Text("Start")
+                    Text(MyBundle.message("einburgerungstest.tab.start.button"))
                 }
             }
         }
@@ -42,7 +43,7 @@ internal fun EinburgerungsTestTab(viewModel: EinburgerungsTestViewModel) {
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Loading...")
+                Text(MyBundle.message("einburgerungstest.tab.loading"))
             }
         }
 
@@ -69,12 +70,12 @@ internal fun EinburgerungsTestTab(viewModel: EinburgerungsTestViewModel) {
                             onClick = { viewModel.onPreviousQuestion() },
                             enabled = canGoPrevious
                         ) {
-                            Text("Previous")
+                            Text(MyBundle.message("einburgerungstest.tab.previous.button"))
                         }
                         DefaultButton(
                             onClick = { viewModel.onNextQuestion() }
                         ) {
-                            Text("Next")
+                            Text(MyBundle.message("einburgerungstest.tab.next.button"))
                         }
                     }
                 }

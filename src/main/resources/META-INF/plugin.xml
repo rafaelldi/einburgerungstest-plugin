@@ -1,7 +1,7 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.rafaelldi.einburgerungstest</id>
-    <name>Einburgerungs Test</name>
+    <id>me.rafaelldi.einburgerungstest</id>
+    <name>Einbürgerungstest</name>
     <vendor>rafaelldi</vendor>
 
     <dependencies>
@@ -12,9 +12,9 @@
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="me.rafaelldi.einburgerungstest.toolWindow.EinburgerungsTestToolWindowFactory"
-                    id="Einburgerungs Test"
-                    icon="AllIcons.General.Balloon"
+        <toolWindow factoryClass="me.rafaelldi.einburgerungstest.toolWindow.EinburgerungstestToolWindowFactory"
+                    id="Einbürgerungstest"
+                    icon="AllIcons.Toolwindows.Learn"
                     anchor="right"
                     doNotActivateOnStart="true"/>
     </extensions>

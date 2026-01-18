@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
+import me.rafaelldi.einburgerungstest.MyBundle
 import me.rafaelldi.einburgerungstest.questions.Question
 import org.jetbrains.jewel.bridge.toComposeColor
 import org.jetbrains.jewel.ui.component.Text
@@ -83,7 +84,7 @@ internal fun QuestionCard(
         }
 
         Text(
-            text = "Question #${question.id} • ${question.category}",
+            text = MyBundle.message("einburgerungstest.question.card.footer", question.id, question.category),
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .align(Alignment.End)

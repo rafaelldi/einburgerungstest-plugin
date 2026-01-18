@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import me.rafaelldi.einburgerungstest.questions.Question
 import me.rafaelldi.einburgerungstest.questions.QuestionService
 
-internal interface EinburgerungsTestViewModel : Disposable {
+internal interface EinburgerungstestViewModel : Disposable {
     val uiState: StateFlow<UiState>
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
@@ -23,10 +23,10 @@ internal interface EinburgerungsTestViewModel : Disposable {
     fun onPreviousQuestion()
 }
 
-internal class EinburgerungsTestViewModelImpl(
+internal class EinburgerungstestViewModelImpl(
     private val viewModelScope: CoroutineScope,
     private val questionService: QuestionService
-) : EinburgerungsTestViewModel {
+) : EinburgerungstestViewModel {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()

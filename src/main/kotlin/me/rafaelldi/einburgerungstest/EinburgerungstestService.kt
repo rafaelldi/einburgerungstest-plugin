@@ -7,9 +7,9 @@ import com.intellij.platform.util.coroutines.childScope
 import kotlinx.coroutines.CoroutineScope
 
 @Service(Service.Level.PROJECT)
-internal class EinburgerungsTestService(private val scope: CoroutineScope) {
+internal class EinburgerungstestService(private val scope: CoroutineScope) {
     companion object {
-        fun getInstance(project: Project): EinburgerungsTestService = project.service()
+        fun getInstance(project: Project): EinburgerungstestService = project.service()
     }
 
     @Suppress("UnstableApiUsage")
