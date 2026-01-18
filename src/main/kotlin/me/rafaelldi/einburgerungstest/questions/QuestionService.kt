@@ -8,6 +8,7 @@ import me.rafaelldi.einburgerungstest.JsonResourceLoader
 
 internal interface QuestionService {
     fun loadQuestions()
+    fun getRandomQuestion(): Question
 }
 
 @Service(Service.Level.PROJECT)
@@ -26,5 +27,9 @@ internal class QuestionServiceImpl(private val project: Project): QuestionServic
         val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
         val questions = json.decodeFromString<List<Question>>(jsonContent)
         questionList = questions
+    }
+
+    override fun getRandomQuestion(): Question {
+        return questionList.random()
     }
 }

@@ -19,13 +19,6 @@ internal fun EinburgerungsTestTab(viewModel: EinburgerungsTestViewModel) {
     Column(
         Modifier.fillMaxWidth()
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Start",
-            )
-        }
+
     }
 }
