@@ -1,15 +1,21 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.rafaelldi.einburgerungstestplugin</id>
-    <name>einburgerungs-test-plugin</name>
+    <id>com.github.rafaelldi.einburgerungstest</id>
+    <name>Einburgerungs Test</name>
     <vendor>rafaelldi</vendor>
 
-    <depends>com.intellij.modules.platform</depends>
+    <dependencies>
+        <module name="intellij.platform.compose"/>
+    </dependencies>
+
 
     <resource-bundle>messages.MyBundle</resource-bundle>
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.rafaelldi.einburgerungstestplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.rafaelldi.einburgerungstestplugin.startup.MyProjectActivity" />
+        <toolWindow factoryClass="me.rafaelldi.einburgerungstest.toolWindow.EinburgerungsTestToolWindowFactory"
+                    id="Einburgerungs Test"
+                    icon="AllIcons.General.Balloon"
+                    anchor="right"
+                    doNotActivateOnStart="true"/>
     </extensions>
 </idea-plugin>

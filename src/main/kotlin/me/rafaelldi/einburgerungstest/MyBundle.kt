@@ -1,4 +1,4 @@
-package com.github.rafaelldi.einburgerungstestplugin
+package me.rafaelldi.einburgerungstest
 
 import com.intellij.DynamicBundle
 import org.jetbrains.annotations.NonNls
