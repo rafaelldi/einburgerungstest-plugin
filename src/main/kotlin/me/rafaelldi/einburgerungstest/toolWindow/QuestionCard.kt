@@ -24,6 +24,7 @@ import org.jetbrains.jewel.ui.component.Text
 internal fun QuestionCard(
     question: Question,
     selectedAnswerIndex: Int?,
+    correctAnswerIndex: Int?,
     onAnswerSelected: (Int) -> Unit
 ) {
     val backgroundColor = UIUtil.getPanelBackground().toComposeColor()
@@ -48,8 +49,8 @@ internal fun QuestionCard(
         )
 
         question.answers.forEachIndexed { index, answer ->
-            val isSelected = selectedAnswerIndex == index
-            val isCorrect = index == question.correct
+            val isSelected = index == selectedAnswerIndex
+            val isCorrect = index == correctAnswerIndex
             val isAnswered = selectedAnswerIndex != null
 
             val answerBackgroundColor = when {

@@ -14,11 +14,13 @@ internal interface EinburgerungsTestViewModel : Disposable {
     val uiState: StateFlow<UiState>
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
-    val isAnswered: StateFlow<Boolean>
+    val correctAnswerIndex: StateFlow<Int?>
+    val canGoPrevious: StateFlow<Boolean>
 
     fun onLoadQuestions()
     fun onAnswerSelected(index: Int)
     fun onNextQuestion()
+    fun onPreviousQuestion()
 }
 
 internal class EinburgerungsTestViewModelImpl(
@@ -35,29 +37,46 @@ internal class EinburgerungsTestViewModelImpl(
     private val _selectedAnswerIndex = MutableStateFlow<Int?>(null)
     override val selectedAnswerIndex: StateFlow<Int?> = _selectedAnswerIndex.asStateFlow()
 
-    private val _isAnswered = MutableStateFlow(false)
-    override val isAnswered: StateFlow<Boolean> = _isAnswered.asStateFlow()
+    private val _correctAnswerIndex = MutableStateFlow<Int?>(null)
+    override val correctAnswerIndex: StateFlow<Int?> = _correctAnswerIndex.asStateFlow()
+
+    private val _canGoPrevious = MutableStateFlow(false)
+    override val canGoPrevious: StateFlow<Boolean> = _canGoPrevious.asStateFlow()
 
     override fun onLoadQuestions() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            questionService.loadQuestions()
 
-            _currentQuestion.value = questionService.nextQuestion()
+            questionService.loadQuestions()
+            val firstQuestion = questionService.nextQuestion()
+            _currentQuestion.value = firstQuestion
+            _correctAnswerIndex.value = questionService.getCorrectAnswer(firstQuestion.id)
+
             _uiState.value = UiState.QuestionShowing
         }
     }
 
     override fun onAnswerSelected(index: Int) {
-        if (_isAnswered.value) return
         _selectedAnswerIndex.value = index
-        _isAnswered.value = true
+        questionService.saveAnswer(index)
     }
 
     override fun onNextQuestion() {
-        _selectedAnswerIndex.value = null
-        _isAnswered.value = false
-        _currentQuestion.value = questionService.nextQuestion()
+        val nextQuestion = questionService.nextQuestion()
+
+        _currentQuestion.value = nextQuestion
+        _correctAnswerIndex.value = questionService.getCorrectAnswer(nextQuestion.id)
+        _canGoPrevious.value = questionService.hasPrevious()
+        _selectedAnswerIndex.value = questionService.getSavedAnswer()
+    }
+
+    override fun onPreviousQuestion() {
+        val previousQuestion = questionService.previousQuestion() ?: return
+
+        _currentQuestion.value = previousQuestion
+        _correctAnswerIndex.value = questionService.getCorrectAnswer(previousQuestion.id)
+        _canGoPrevious.value = questionService.hasPrevious()
+        _selectedAnswerIndex.value = questionService.getSavedAnswer()
     }
 
     override fun dispose() {
