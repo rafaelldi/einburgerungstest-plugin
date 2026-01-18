@@ -8,7 +8,7 @@ import me.rafaelldi.einburgerungstest.JsonResourceLoader
 
 internal interface QuestionService {
     fun loadQuestions()
-    fun getRandomQuestion(): Question
+    fun nextQuestion(): Question
 }
 
 @Service(Service.Level.PROJECT)
@@ -21,15 +21,17 @@ internal class QuestionServiceImpl(private val project: Project): QuestionServic
         ignoreUnknownKeys = true
     }
 
-    private var questionList: List<Question> = emptyList()
+    private var allQuestions: List<Question> = emptyList()
 
     override fun loadQuestions() {
         val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
-        val questions = json.decodeFromString<List<Question>>(jsonContent)
-        questionList = questions
+        val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
+        allQuestions = loadedQuestions.mapIndexed { index, questionDTO ->
+            Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, questionDTO.category)
+        }
     }
 
-    override fun getRandomQuestion(): Question {
-        return questionList.random()
+    override fun nextQuestion(): Question {
+        return allQuestions.random()
     }
 }

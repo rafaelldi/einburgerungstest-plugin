@@ -42,7 +42,7 @@ internal class EinburgerungsTestViewModelImpl(
 
         currentLoadingQuestionJob = viewModelScope.launch {
             questionService.loadQuestions()
-            _currentQuestion.value = questionService.getRandomQuestion()
+            _currentQuestion.value = questionService.nextQuestion()
         }
     }
 
@@ -55,7 +55,7 @@ internal class EinburgerungsTestViewModelImpl(
     override fun onNextQuestion() {
         _selectedAnswerIndex.value = null
         _isAnswered.value = false
-        _currentQuestion.value = questionService.getRandomQuestion()
+        _currentQuestion.value = questionService.nextQuestion()
     }
 
     override fun dispose() {

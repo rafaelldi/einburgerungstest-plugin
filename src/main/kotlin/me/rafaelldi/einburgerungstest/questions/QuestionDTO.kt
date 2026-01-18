@@ -1,7 +1,9 @@
 package me.rafaelldi.einburgerungstest.questions
 
-internal data class Question(
-    val id: Int,
+import kotlinx.serialization.Serializable
+
+@Serializable
+internal data class QuestionDTO(
     val question: String,
     val answers: List<String>,
     val correct: Int,
