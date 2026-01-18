@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
@@ -41,6 +43,7 @@ internal fun QuestionCard(
     ) {
         Text(
             text = question.question,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
@@ -77,5 +80,13 @@ internal fun QuestionCard(
                 Text(text = answer)
             }
         }
+
+        Text(
+            text = "Question #${question.id} • ${question.category}",
+            fontWeight = FontWeight.Light,
+            modifier = Modifier
+                .align(Alignment.End)
+                .padding(top = 16.dp),
+        )
     }
 }
