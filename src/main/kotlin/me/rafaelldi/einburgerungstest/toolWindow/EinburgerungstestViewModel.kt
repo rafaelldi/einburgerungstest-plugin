@@ -14,7 +14,6 @@ internal interface EinburgerungstestViewModel : Disposable {
     val uiState: StateFlow<UiState>
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
-    val correctAnswerIndex: StateFlow<Int?>
     val canGoPrevious: StateFlow<Boolean>
 
     fun onLoadQuestions()
@@ -37,9 +36,6 @@ internal class EinburgerungstestViewModelImpl(
     private val _selectedAnswerIndex = MutableStateFlow<Int?>(null)
     override val selectedAnswerIndex: StateFlow<Int?> = _selectedAnswerIndex.asStateFlow()
 
-    private val _correctAnswerIndex = MutableStateFlow<Int?>(null)
-    override val correctAnswerIndex: StateFlow<Int?> = _correctAnswerIndex.asStateFlow()
-
     private val _canGoPrevious = MutableStateFlow(false)
     override val canGoPrevious: StateFlow<Boolean> = _canGoPrevious.asStateFlow()
 
@@ -50,7 +46,6 @@ internal class EinburgerungstestViewModelImpl(
             questionService.loadQuestions()
             val firstQuestion = questionService.nextQuestion()
             _currentQuestion.value = firstQuestion
-            _correctAnswerIndex.value = questionService.getCorrectAnswer(firstQuestion.id)
 
             _uiState.value = UiState.QuestionShowing
         }
@@ -65,7 +60,6 @@ internal class EinburgerungstestViewModelImpl(
         val nextQuestion = questionService.nextQuestion()
 
         _currentQuestion.value = nextQuestion
-        _correctAnswerIndex.value = questionService.getCorrectAnswer(nextQuestion.id)
         _canGoPrevious.value = questionService.hasPrevious()
         _selectedAnswerIndex.value = questionService.getSavedAnswer()
     }
@@ -74,7 +68,6 @@ internal class EinburgerungstestViewModelImpl(
         val previousQuestion = questionService.previousQuestion() ?: return
 
         _currentQuestion.value = previousQuestion
-        _correctAnswerIndex.value = questionService.getCorrectAnswer(previousQuestion.id)
         _canGoPrevious.value = questionService.hasPrevious()
         _selectedAnswerIndex.value = questionService.getSavedAnswer()
     }

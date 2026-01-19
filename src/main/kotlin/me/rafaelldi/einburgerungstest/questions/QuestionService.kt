@@ -8,7 +8,6 @@ import me.rafaelldi.einburgerungstest.JsonResourceLoader
 
 internal interface QuestionService {
     fun loadQuestions()
-    fun getCorrectAnswer(questionId: Int): Int?
     fun nextQuestion(): Question
     fun previousQuestion(): Question?
     fun hasPrevious(): Boolean
@@ -30,20 +29,14 @@ internal class QuestionServiceImpl(private val project: Project) : QuestionServi
     private val questionHistory: MutableList<Question> = mutableListOf()
     private var currentIndex: Int = -1
 
-    private val correctAnswers: MutableMap<Int, Int> = mutableMapOf()
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()
 
     override fun loadQuestions() {
         val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
         val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
         allQuestions = loadedQuestions.mapIndexed { index, questionDTO ->
-            correctAnswers[index] = questionDTO.correct
-            Question(index, questionDTO.question, questionDTO.answers, questionDTO.category)
+            Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, questionDTO.category)
         }
-    }
-
-    override fun getCorrectAnswer(questionId: Int): Int? {
-        return correctAnswers.getOrDefault(questionId, null)
     }
 
     override fun nextQuestion(): Question {

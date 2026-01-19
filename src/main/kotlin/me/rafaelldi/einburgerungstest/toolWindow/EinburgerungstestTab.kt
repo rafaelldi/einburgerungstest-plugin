@@ -23,7 +23,6 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val currentQuestion by viewModel.currentQuestion.collectAsState()
     val selectedAnswerIndex by viewModel.selectedAnswerIndex.collectAsState()
-    val correctAnswerIndex by viewModel.correctAnswerIndex.collectAsState()
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
 
     when (uiState) {
@@ -58,7 +57,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                     QuestionCard(
                         question = question,
                         selectedAnswerIndex = selectedAnswerIndex,
-                        correctAnswerIndex = correctAnswerIndex,
+                        correctAnswerIndex = question.correctAnswer,
                         onAnswerSelected = { viewModel.onAnswerSelected(it) }
                     )
 
