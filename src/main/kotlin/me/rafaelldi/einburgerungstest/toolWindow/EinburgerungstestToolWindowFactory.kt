@@ -7,7 +7,6 @@ import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import me.rafaelldi.einburgerungstest.EinburgerungstestService
 import me.rafaelldi.einburgerungstest.questions.QuestionServiceImpl
-import me.rafaelldi.einburgerungstest.questions.QuestionStoreServiceImpl
 import org.jetbrains.jewel.bridge.addComposeTab
 
 
