@@ -6,7 +6,7 @@ serialization = "1.9.0"
 hamcrest = "2.2"
 # Has to be in sync with IntelliJ Platform
 composeuitest = "1.10.0-alpha01"
-jewelstandalone = "0.32.1-253.28294.285"
+jewelstandalone = "0.33.0-253.29795"
 skikoAwtRuntimeAll = "0.9.24"
 
 # plugins
