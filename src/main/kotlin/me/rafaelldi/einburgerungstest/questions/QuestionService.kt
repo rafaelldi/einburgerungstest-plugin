@@ -1,10 +1,8 @@
 package me.rafaelldi.einburgerungstest.questions
 
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.components.service
-import kotlinx.serialization.json.Json
-import me.rafaelldi.einburgerungstest.JsonResourceLoader
+import com.intellij.openapi.project.Project
 
 internal interface QuestionService {
     fun loadQuestions()
@@ -16,34 +14,24 @@ internal interface QuestionService {
 }
 
 @Service(Service.Level.PROJECT)
-internal class QuestionServiceImpl(private val project: Project) : QuestionService {
+internal class QuestionServiceImpl : QuestionService {
     companion object {
         fun getInstance(project: Project): QuestionServiceImpl = project.service()
     }
 
-    private val json = Json {
-        ignoreUnknownKeys = true
-    }
-
-    private var allQuestions: List<Question> = emptyList()
     private val questionHistory: MutableList<Question> = mutableListOf()
     private var currentIndex: Int = -1
-
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()
 
     override fun loadQuestions() {
-        val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
-        val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
-        allQuestions = loadedQuestions.mapIndexed { index, questionDTO ->
-            Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, questionDTO.category)
-        }
+        QuestionStoreServiceImpl.getInstance().loadQuestions()
     }
 
     override fun nextQuestion(): Question {
         if (currentIndex < questionHistory.size - 1) {
             currentIndex++
         } else {
-            val newQuestion = allQuestions.random()
+            val newQuestion = QuestionStoreServiceImpl.getInstance().getRandomQuestion()
             questionHistory.add(newQuestion)
             currentIndex++
         }
