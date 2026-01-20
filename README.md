@@ -1,18 +1,18 @@
 # Einbürgerungstest Plugin
 
-![Build](https://github.com/rafaelldi/einburgerungs-test-plugin/workflows/Build/badge.svg)
+![Build](https://github.com/rafaelldi/einburgerungstest-plugin/workflows/Build/badge.svg)
 [![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 [![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
 
 <!-- Plugin description -->
-Plugin for practicing Einbürgerungstest exam
+Plugin for practicing Einbuergerungstest exam
 <!-- Plugin description end -->
 
 ## Installation
 
 - Using the IDE built-in plugin system:
 
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "einburgerungs-test-plugin"</kbd> >
+  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "Einbuergerungstest"</kbd> >
   <kbd>Install</kbd>
 
 - Using JetBrains Marketplace:
@@ -24,7 +24,7 @@ Plugin for practicing Einbürgerungstest exam
 
 - Manually:
 
-  Download the [latest release](https://github.com/rafaelldi/einburgerungs-test-plugin/releases/latest) and install it manually using
+  Download the [latest release](https://github.com/rafaelldi/einburgerungstest-plugin/releases/latest) and install it manually using
   <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
 
 

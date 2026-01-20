@@ -1,6 +1,6 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# einburgerungs-test-plugin Changelog
+# Einbuergerungstest Plugin Changelog
 
 ## [Unreleased]
 ### Added

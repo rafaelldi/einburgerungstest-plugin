@@ -2,4 +2,4 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "einburgerungs-test-plugin"
+rootProject.name = "einburgerungstest-plugin"
