@@ -26,13 +26,14 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
         val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
         allQuestions = loadedQuestions.mapIndexed { index, questionDTO ->
-            Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, questionDTO.category)
+            val category = QuestionCategory.entries.first { it.displayName == questionDTO.category }
+            Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
         }
     }
 
     override fun getRandomQuestion(category: QuestionCategory?): Question {
         val filteredQuestions = if (category != null) {
-            allQuestions.filter { it.category == category.displayName }
+            allQuestions.filter { it.category == category }
         } else {
             allQuestions
         }

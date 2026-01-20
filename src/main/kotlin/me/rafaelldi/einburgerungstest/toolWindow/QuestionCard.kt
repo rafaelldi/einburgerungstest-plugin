@@ -84,7 +84,7 @@ internal fun QuestionCard(
         }
 
         Text(
-            text = MyBundle.message("einburgerungstest.question.card.footer", question.id, question.category),
+            text = MyBundle.message("einburgerungstest.question.card.footer", question.id, question.category.displayName),
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .align(Alignment.End)
