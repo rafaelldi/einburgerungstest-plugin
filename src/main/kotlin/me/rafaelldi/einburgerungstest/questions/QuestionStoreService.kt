@@ -20,23 +20,19 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         ignoreUnknownKeys = true
     }
 
-    private var allQuestions: List<Question> = emptyList()
+    private var questionsByCategory: Map<QuestionCategory, List<Question>> = emptyMap()
 
     override fun loadQuestions() {
         val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
         val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
-        allQuestions = loadedQuestions.mapIndexed { index, questionDTO ->
+        questionsByCategory = loadedQuestions.mapIndexed { index, questionDTO ->
             val category = QuestionCategory.entries.first { it.displayName == questionDTO.category }
             Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
-        }
+        }.groupBy { it.category }
     }
 
     override fun getRandomQuestion(category: QuestionCategory?): Question {
-        val filteredQuestions = if (category != null) {
-            allQuestions.filter { it.category == category }
-        } else {
-            allQuestions
-        }
-        return filteredQuestions.random()
+        val selectedCategory = category ?: questionsByCategory.keys.random()
+        return requireNotNull(questionsByCategory[selectedCategory]).random()
     }
 }
