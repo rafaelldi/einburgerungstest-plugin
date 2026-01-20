@@ -1,29 +1,42 @@
 package me.rafaelldi.einburgerungstest.questions
 
-internal enum class QuestionCategory(category: String) {
-    BildungUndArbeit("Bildung und Arbeit"),
-    BundUndLaender("Bund und Länder"),
-    EuropaUndWelt("Europa und Welt"),
-    Geschichte("Geschichte"),
-    GesellschaftUndFamilie("Gesellschaft und Familie"),
-    Politik("Politik"),
-    Recht("Recht"),
-    ReligionUndKultur("Religion und Kultur"),
-    Staat("Staat"),
-    Wirtschaft("Wirtschaft"),
-    BadenWuerttemberg("Baden-Württemberg"),
-    Bayern("Bayern"),
-    Berlin("Berlin"),
-    Brandenburg("Brandenburg"),
-    Bremen("Bremen"),
-    Hamburg("Hamburg"),
-    Hessen("Hessen"),
-    MecklenburgVorpommern("Mecklenburg-Vorpommern"),
-    Niedersachsen("Niedersachsen"),
-    NordrheinWestfalen("Nordrhein-Westfalen"),
-    RheinlandPfalz("Rheinland-Pfalz"),
-    Sachsen("Sachsen"),
-    SachsenAnhalt("Sachsen-Anhalt"),
-    SchleswigHolstein("Schleswig-Holstein"),
-    Thueringen("Thüringen")
+internal enum class CategoryGroup {
+    NATIONAL,
+    REGIONAL
+}
+
+internal enum class QuestionCategory(val displayName: String, val group: CategoryGroup) {
+    BildungUndArbeit("Bildung und Arbeit", CategoryGroup.NATIONAL),
+    BundUndLaender("Bund und Länder", CategoryGroup.NATIONAL),
+    EuropaUndWelt("Europa und Welt", CategoryGroup.NATIONAL),
+    Geschichte("Geschichte", CategoryGroup.NATIONAL),
+    GesellschaftUndFamilie("Gesellschaft und Familie", CategoryGroup.NATIONAL),
+    Politik("Politik", CategoryGroup.NATIONAL),
+    Recht("Recht", CategoryGroup.NATIONAL),
+    ReligionUndKultur("Religion und Kultur", CategoryGroup.NATIONAL),
+    Staat("Staat", CategoryGroup.NATIONAL),
+    Wirtschaft("Wirtschaft", CategoryGroup.NATIONAL),
+    BadenWuerttemberg("Baden-Württemberg", CategoryGroup.REGIONAL),
+    Bayern("Bayern", CategoryGroup.REGIONAL),
+    Berlin("Berlin", CategoryGroup.REGIONAL),
+    Brandenburg("Brandenburg", CategoryGroup.REGIONAL),
+    Bremen("Bremen", CategoryGroup.REGIONAL),
+    Hamburg("Hamburg", CategoryGroup.REGIONAL),
+    Hessen("Hessen", CategoryGroup.REGIONAL),
+    MecklenburgVorpommern("Mecklenburg-Vorpommern", CategoryGroup.REGIONAL),
+    Niedersachsen("Niedersachsen", CategoryGroup.REGIONAL),
+    NordrheinWestfalen("Nordrhein-Westfalen", CategoryGroup.REGIONAL),
+    RheinlandPfalz("Rheinland-Pfalz", CategoryGroup.REGIONAL),
+    Sachsen("Sachsen", CategoryGroup.REGIONAL),
+    SachsenAnhalt("Sachsen-Anhalt", CategoryGroup.REGIONAL),
+    SchleswigHolstein("Schleswig-Holstein", CategoryGroup.REGIONAL),
+    Thueringen("Thüringen", CategoryGroup.REGIONAL);
+
+    companion object {
+        val nationalCategories: List<QuestionCategory> =
+            entries.filter { it.group == CategoryGroup.NATIONAL }
+
+        val regionalCategories: List<QuestionCategory> =
+            entries.filter { it.group == CategoryGroup.REGIONAL }
+    }
 }

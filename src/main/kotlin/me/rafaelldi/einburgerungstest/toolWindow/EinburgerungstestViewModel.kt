@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.rafaelldi.einburgerungstest.questions.Question
+import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 import me.rafaelldi.einburgerungstest.questions.QuestionService
 
 internal interface EinburgerungstestViewModel : Disposable {
@@ -15,8 +16,10 @@ internal interface EinburgerungstestViewModel : Disposable {
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
     val canGoPrevious: StateFlow<Boolean>
+    val selectedCategory: StateFlow<QuestionCategory?>
 
     fun onLoadQuestions()
+    fun onCategoryChanged(category: QuestionCategory?)
     fun onAnswerSelected(index: Int)
     fun onNextQuestion()
     fun onPreviousQuestion()
@@ -39,16 +42,24 @@ internal class EinburgerungstestViewModelImpl(
     private val _canGoPrevious = MutableStateFlow(false)
     override val canGoPrevious: StateFlow<Boolean> = _canGoPrevious.asStateFlow()
 
+    private val _selectedCategory = MutableStateFlow<QuestionCategory?>(null)
+    override val selectedCategory: StateFlow<QuestionCategory?> = _selectedCategory.asStateFlow()
+
     override fun onLoadQuestions() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
             questionService.loadQuestions()
+            questionService.startQuiz(_selectedCategory.value)
             val firstQuestion = questionService.nextQuestion()
             _currentQuestion.value = firstQuestion
 
             _uiState.value = UiState.QuestionShowing
         }
+    }
+
+    override fun onCategoryChanged(category: QuestionCategory?) {
+        _selectedCategory.value = category
     }
 
     override fun onAnswerSelected(index: Int) {

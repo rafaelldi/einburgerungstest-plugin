@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 
 internal interface QuestionService {
     fun loadQuestions()
+    fun startQuiz(category: QuestionCategory?)
     fun nextQuestion(): Question
     fun previousQuestion(): Question?
     fun hasPrevious(): Boolean
@@ -19,6 +20,7 @@ internal class QuestionServiceImpl : QuestionService {
         fun getInstance(project: Project): QuestionServiceImpl = project.service()
     }
 
+    private var currentCategory: QuestionCategory? = null
     private val questionHistory: MutableList<Question> = mutableListOf()
     private var currentIndex: Int = -1
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()
@@ -27,11 +29,18 @@ internal class QuestionServiceImpl : QuestionService {
         QuestionStoreServiceImpl.getInstance().loadQuestions()
     }
 
+    override fun startQuiz(category: QuestionCategory?) {
+        currentCategory = category
+        questionHistory.clear()
+        currentIndex = -1
+        answerHistory.clear()
+    }
+
     override fun nextQuestion(): Question {
         if (currentIndex < questionHistory.size - 1) {
             currentIndex++
         } else {
-            val newQuestion = QuestionStoreServiceImpl.getInstance().getRandomQuestion()
+            val newQuestion = QuestionStoreServiceImpl.getInstance().getRandomQuestion(currentCategory)
             questionHistory.add(newQuestion)
             currentIndex++
         }
