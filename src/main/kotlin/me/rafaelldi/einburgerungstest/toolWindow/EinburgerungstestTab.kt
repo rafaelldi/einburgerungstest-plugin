@@ -48,7 +48,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                         selectedCategory = selectedCategory,
                         onCategoryChanged = { viewModel.onCategoryChanged(it) }
                     )
-                    DefaultButton(onClick = { viewModel.onLoadQuestions() }) {
+                    DefaultButton(onClick = { viewModel.onStartQuiz() }) {
                         Text(MyBundle.message("einburgerungstest.tab.start.button"))
                     }
                 }
@@ -88,6 +88,9 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                             enabled = canGoPrevious
                         ) {
                             Text(MyBundle.message("einburgerungstest.tab.previous.button"))
+                        }
+                        OutlinedButton(onClick = { viewModel.onResetQuiz() }) {
+                            Text(MyBundle.message("einburgerungstest.tab.startOver.button"))
                         }
                         DefaultButton(
                             onClick = { viewModel.onNextQuestion() }

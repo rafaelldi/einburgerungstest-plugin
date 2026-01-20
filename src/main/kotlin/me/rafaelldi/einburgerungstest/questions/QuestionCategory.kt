@@ -27,6 +27,7 @@ internal enum class QuestionCategory(val displayName: String, val group: Categor
     Niedersachsen("Niedersachsen", CategoryGroup.REGIONAL),
     NordrheinWestfalen("Nordrhein-Westfalen", CategoryGroup.REGIONAL),
     RheinlandPfalz("Rheinland-Pfalz", CategoryGroup.REGIONAL),
+    Saarland("Saarland", CategoryGroup.REGIONAL),
     Sachsen("Sachsen", CategoryGroup.REGIONAL),
     SachsenAnhalt("Sachsen-Anhalt", CategoryGroup.REGIONAL),
     SchleswigHolstein("Schleswig-Holstein", CategoryGroup.REGIONAL),

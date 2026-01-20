@@ -13,16 +13,17 @@ import me.rafaelldi.einburgerungstest.questions.QuestionService
 
 internal interface EinburgerungstestViewModel : Disposable {
     val uiState: StateFlow<UiState>
+    val selectedCategory: StateFlow<QuestionCategory?>
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
     val canGoPrevious: StateFlow<Boolean>
-    val selectedCategory: StateFlow<QuestionCategory?>
 
-    fun onLoadQuestions()
+    fun onStartQuiz()
     fun onCategoryChanged(category: QuestionCategory?)
     fun onAnswerSelected(index: Int)
     fun onNextQuestion()
     fun onPreviousQuestion()
+    fun onResetQuiz()
 }
 
 internal class EinburgerungstestViewModelImpl(
@@ -33,6 +34,9 @@ internal class EinburgerungstestViewModelImpl(
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
+    private val _selectedCategory = MutableStateFlow<QuestionCategory?>(null)
+    override val selectedCategory: StateFlow<QuestionCategory?> = _selectedCategory.asStateFlow()
+
     private val _currentQuestion = MutableStateFlow<Question?>(null)
     override val currentQuestion: StateFlow<Question?> = _currentQuestion.asStateFlow()
 
@@ -42,14 +46,10 @@ internal class EinburgerungstestViewModelImpl(
     private val _canGoPrevious = MutableStateFlow(false)
     override val canGoPrevious: StateFlow<Boolean> = _canGoPrevious.asStateFlow()
 
-    private val _selectedCategory = MutableStateFlow<QuestionCategory?>(null)
-    override val selectedCategory: StateFlow<QuestionCategory?> = _selectedCategory.asStateFlow()
-
-    override fun onLoadQuestions() {
+    override fun onStartQuiz() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            questionService.loadQuestions()
             questionService.startQuiz(_selectedCategory.value)
             val firstQuestion = questionService.nextQuestion()
             _currentQuestion.value = firstQuestion
@@ -71,16 +71,23 @@ internal class EinburgerungstestViewModelImpl(
         val nextQuestion = questionService.nextQuestion()
 
         _currentQuestion.value = nextQuestion
-        _canGoPrevious.value = questionService.hasPrevious()
         _selectedAnswerIndex.value = questionService.getSavedAnswer()
+        _canGoPrevious.value = questionService.hasPrevious()
     }
 
     override fun onPreviousQuestion() {
         val previousQuestion = questionService.previousQuestion() ?: return
 
         _currentQuestion.value = previousQuestion
-        _canGoPrevious.value = questionService.hasPrevious()
         _selectedAnswerIndex.value = questionService.getSavedAnswer()
+        _canGoPrevious.value = questionService.hasPrevious()
+    }
+
+    override fun onResetQuiz() {
+        _uiState.value = UiState.NotStarted
+        _currentQuestion.value = null
+        _selectedAnswerIndex.value = null
+        _canGoPrevious.value = false
     }
 
     override fun dispose() {
