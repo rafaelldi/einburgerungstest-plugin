@@ -13,13 +13,13 @@ import me.rafaelldi.einburgerungstest.questions.QuestionService
 
 internal interface EinburgerungstestViewModel : Disposable {
     val uiState: StateFlow<UiState>
-    val selectedCategory: StateFlow<QuestionCategory?>
+    val selectedCategory: StateFlow<QuestionCategory>
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
     val canGoPrevious: StateFlow<Boolean>
 
     fun onStartQuiz()
-    fun onCategoryChanged(category: QuestionCategory?)
+    fun onCategoryChanged(category: QuestionCategory)
     fun onAnswerSelected(index: Int)
     fun onNextQuestion()
     fun onPreviousQuestion()
@@ -34,8 +34,8 @@ internal class EinburgerungstestViewModelImpl(
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    private val _selectedCategory = MutableStateFlow<QuestionCategory?>(null)
-    override val selectedCategory: StateFlow<QuestionCategory?> = _selectedCategory.asStateFlow()
+    private val _selectedCategory = MutableStateFlow(QuestionCategory.All)
+    override val selectedCategory: StateFlow<QuestionCategory> = _selectedCategory.asStateFlow()
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
     override val currentQuestion: StateFlow<Question?> = _currentQuestion.asStateFlow()
@@ -58,7 +58,7 @@ internal class EinburgerungstestViewModelImpl(
         }
     }
 
-    override fun onCategoryChanged(category: QuestionCategory?) {
+    override fun onCategoryChanged(category: QuestionCategory) {
         _selectedCategory.value = category
     }
 

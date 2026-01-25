@@ -8,7 +8,7 @@ import me.rafaelldi.einburgerungstest.JsonResourceLoader
 
 internal interface QuestionStoreService {
     fun loadQuestions()
-    fun getRandomQuestion(category: QuestionCategory? = null): Question
+    fun getRandomQuestion(category: QuestionCategory): Question
 }
 
 @Service(Service.Level.APP)
@@ -40,8 +40,8 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         }
     }
 
-    override fun getRandomQuestion(category: QuestionCategory?): Question {
-        val selectedCategory = category ?: questionsByCategory.keys.random()
+    override fun getRandomQuestion(category: QuestionCategory): Question {
+        val selectedCategory = if (category == QuestionCategory.All) questionsByCategory.keys.random() else category
         return requireNotNull(questionsByCategory[selectedCategory]).random()
     }
 }

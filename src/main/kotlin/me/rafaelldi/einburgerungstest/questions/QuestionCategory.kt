@@ -2,10 +2,12 @@ package me.rafaelldi.einburgerungstest.questions
 
 internal enum class CategoryGroup {
     NATIONAL,
-    REGIONAL
+    REGIONAL,
+    NONE
 }
 
 internal enum class QuestionCategory(val displayName: String, val group: CategoryGroup) {
+    All("All Questions", CategoryGroup.NONE),
     BildungUndArbeit("Bildung und Arbeit", CategoryGroup.NATIONAL),
     BundUndLaender("Bund und Länder", CategoryGroup.NATIONAL),
     EuropaUndWelt("Europa und Welt", CategoryGroup.NATIONAL),
