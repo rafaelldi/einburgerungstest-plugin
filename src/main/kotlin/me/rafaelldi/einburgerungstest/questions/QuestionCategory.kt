@@ -3,12 +3,12 @@ package me.rafaelldi.einburgerungstest.questions
 internal enum class CategoryGroup {
     NATIONAL,
     REGIONAL,
-    NONE
+    GROUP
 }
 
 internal enum class QuestionCategory(val displayName: String, val group: CategoryGroup) {
-    All("All Questions", CategoryGroup.NONE),
-    General("General Questions", CategoryGroup.NONE),
+    All("All Questions", CategoryGroup.GROUP),
+    General("General Questions", CategoryGroup.GROUP),
     BildungUndArbeit("Bildung und Arbeit", CategoryGroup.NATIONAL),
     BundUndLaender("Bund und Länder", CategoryGroup.NATIONAL),
     EuropaUndWelt("Europa und Welt", CategoryGroup.NATIONAL),
@@ -37,6 +37,9 @@ internal enum class QuestionCategory(val displayName: String, val group: Categor
     Thueringen("Thüringen", CategoryGroup.REGIONAL);
 
     companion object {
+        val nonGroupCategories : List<QuestionCategory> =
+            entries.filter { it.group != CategoryGroup.GROUP }.toList()
+
         val nationalCategories: List<QuestionCategory> =
             entries.filter { it.group == CategoryGroup.NATIONAL }
 

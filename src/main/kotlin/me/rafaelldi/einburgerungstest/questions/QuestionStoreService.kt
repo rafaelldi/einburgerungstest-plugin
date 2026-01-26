@@ -43,11 +43,11 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
     override fun getRandomQuestion(category: QuestionCategory): Question {
         val selectedCategory = when (category) {
             QuestionCategory.All -> {
-                questionsByCategory.keys.random()
+                QuestionCategory.nonGroupCategories.random()
             }
 
             QuestionCategory.General -> {
-                questionsByCategory.keys.filter { it.group == CategoryGroup.NATIONAL }.random()
+                QuestionCategory.nationalCategories.random()
             }
 
             else -> category
