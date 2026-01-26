@@ -19,7 +19,7 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
         fun getInstance(project: Project): QuestionQuizServiceImpl = project.service()
     }
 
-    private var currentCategory: QuestionCategory = QuestionCategory.All
+    private var currentCategory: QuestionCategory = QuestionCategory.General
     private val questionHistory: MutableList<Question> = mutableListOf()
     private var currentIndex: Int = -1
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()

@@ -40,7 +40,7 @@ internal class EinburgerungstestViewModelImpl(
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    private val _selectedCategory = MutableStateFlow(QuestionCategory.All)
+    private val _selectedCategory = MutableStateFlow(QuestionCategory.General)
     override val selectedCategory: StateFlow<QuestionCategory> = _selectedCategory.asStateFlow()
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)

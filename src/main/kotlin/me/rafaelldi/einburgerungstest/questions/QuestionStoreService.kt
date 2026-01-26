@@ -32,7 +32,7 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
             val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
             questionsByCategory = loadedQuestions.mapIndexed { index, questionDTO ->
                 val category = QuestionCategory.entries.first { it.displayName == questionDTO.category }
-                Question(index, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
+                Question(index + 1, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
             }.groupBy { it.category }
         } catch (e: Exception) {
             LOG.warn("Failed to load questions", e)
@@ -41,7 +41,17 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
     }
 
     override fun getRandomQuestion(category: QuestionCategory): Question {
-        val selectedCategory = if (category == QuestionCategory.All) questionsByCategory.keys.random() else category
+        val selectedCategory = when (category) {
+            QuestionCategory.All -> {
+                questionsByCategory.keys.random()
+            }
+
+            QuestionCategory.General -> {
+                questionsByCategory.keys.filter { it.group == CategoryGroup.NATIONAL }.random()
+            }
+
+            else -> category
+        }
         return requireNotNull(questionsByCategory[selectedCategory]).random()
     }
 }

@@ -109,6 +109,14 @@ private fun CategoryDropdown(
             ) {
                 Text(QuestionCategory.All.displayName)
             }
+            selectableItem(
+                selected = selectedCategory == QuestionCategory.General,
+                onClick = {
+                    onCategoryChanged(QuestionCategory.General)
+                }
+            ) {
+                Text(QuestionCategory.General.displayName)
+            }
 
             separator()
 

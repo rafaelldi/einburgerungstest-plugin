@@ -8,6 +8,7 @@ internal enum class CategoryGroup {
 
 internal enum class QuestionCategory(val displayName: String, val group: CategoryGroup) {
     All("All Questions", CategoryGroup.NONE),
+    General("General Questions", CategoryGroup.NONE),
     BildungUndArbeit("Bildung und Arbeit", CategoryGroup.NATIONAL),
     BundUndLaender("Bund und Länder", CategoryGroup.NATIONAL),
     EuropaUndWelt("Europa und Welt", CategoryGroup.NATIONAL),
