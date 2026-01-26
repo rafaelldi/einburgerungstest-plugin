@@ -5,8 +5,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,14 +21,18 @@ import com.intellij.util.ui.UIUtil
 import me.rafaelldi.einburgerungstest.MyBundle
 import me.rafaelldi.einburgerungstest.questions.Question
 import org.jetbrains.jewel.bridge.toComposeColor
+import org.jetbrains.jewel.ui.component.IconActionButton
 import org.jetbrains.jewel.ui.component.Text
+import org.jetbrains.jewel.ui.icons.AllIconsKeys
 
 @Composable
 internal fun QuestionCard(
     question: Question,
     selectedAnswerIndex: Int?,
     correctAnswerIndex: Int?,
-    onAnswerSelected: (Int) -> Unit
+    favorites: List<Int>,
+    onAnswerSelected: (Int) -> Unit,
+    onFavoriteToggled: (Int) -> Unit
 ) {
     val backgroundColor = UIUtil.getPanelBackground().toComposeColor()
     val borderColor = JBColor.border().toComposeColor()
@@ -43,11 +49,29 @@ internal fun QuestionCard(
             .border(1.dp, borderColor, cardShape)
             .padding(16.dp)
     ) {
-        Text(
-            text = question.question,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+        ) {
+            Text(
+                text = question.question,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .weight(1f)
+            )
+
+            Spacer(modifier = Modifier.width(20.dp))
+
+            IconActionButton(
+                key = if (question.id in favorites) AllIconsKeys.Nodes.Favorite else AllIconsKeys.Nodes.NotFavoriteOnHover,
+                contentDescription = null,
+                onClick = {
+                    onFavoriteToggled(question.id)
+                }
+            )
+
+        }
 
         question.answers.forEachIndexed { index, answer ->
             val isSelected = index == selectedAnswerIndex
@@ -84,7 +108,11 @@ internal fun QuestionCard(
         }
 
         Text(
-            text = MyBundle.message("einburgerungstest.question.card.footer", question.id, question.category.displayName),
+            text = MyBundle.message(
+                "einburgerungstest.question.card.footer",
+                question.id,
+                question.category.displayName
+            ),
             fontWeight = FontWeight.Light,
             modifier = Modifier
                 .align(Alignment.End)

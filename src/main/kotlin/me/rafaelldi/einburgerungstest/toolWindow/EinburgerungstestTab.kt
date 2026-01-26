@@ -19,6 +19,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val selectedAnswerIndex by viewModel.selectedAnswerIndex.collectAsState()
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val favorites by viewModel.favorites.collectAsState()
 
     when (uiState) {
         UiState.NotStarted -> {
@@ -63,7 +64,9 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                         question = question,
                         selectedAnswerIndex = selectedAnswerIndex,
                         correctAnswerIndex = question.correctAnswer,
-                        onAnswerSelected = { viewModel.onAnswerSelected(it) }
+                        favorites = favorites,
+                        onAnswerSelected = { viewModel.onAnswerSelected(it) },
+                        onFavoriteToggled = { viewModel.onToggleFavorite(it) }
                     )
 
                     Row(
@@ -91,6 +94,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     }
 }
 
+@Suppress("UnstableApiUsage")
 @OptIn(ExperimentalJewelApi::class)
 @Composable
 private fun CategoryDropdown(
