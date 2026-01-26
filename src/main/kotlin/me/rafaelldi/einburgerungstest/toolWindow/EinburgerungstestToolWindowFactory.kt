@@ -6,19 +6,22 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
 import me.rafaelldi.einburgerungstest.EinburgerungstestService
+import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceServiceImpl
 import me.rafaelldi.einburgerungstest.questions.QuestionQuizServiceImpl
 import org.jetbrains.jewel.bridge.addComposeTab
 
 
-class EinburgerungstestToolWindowFactory : ToolWindowFactory, DumbAware {
+internal class EinburgerungstestToolWindowFactory : ToolWindowFactory, DumbAware {
     override fun shouldBeAvailable(project: Project) = true
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
-        val questionService = QuestionQuizServiceImpl.getInstance(project)
+        val questionQuizService = QuestionQuizServiceImpl.getInstance(project)
+        val questionPersistenceService = QuestionPersistenceServiceImpl.getInstance()
 
         val viewModel = EinburgerungstestViewModelImpl(
             EinburgerungstestService.getInstance(project).createScope(::EinburgerungstestViewModelImpl.name),
-            questionService
+            questionQuizService,
+            questionPersistenceService
         )
         Disposer.register(toolWindow.disposable, viewModel)
 

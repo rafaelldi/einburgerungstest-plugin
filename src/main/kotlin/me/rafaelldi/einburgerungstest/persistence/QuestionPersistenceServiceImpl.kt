@@ -6,18 +6,24 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.service
 
+internal interface QuestionPersistenceService {
+    var favorites: List<Int>
+}
+
 @Service
 @State(
     name = "me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceService",
     storages = [(Storage("einburgerungstest.xml"))]
 )
-internal class QuestionPersistenceService :
-    SerializablePersistentStateComponent<QuestionPersistenceService.QuestionPersistenceState>(QuestionPersistenceState()) {
+internal class QuestionPersistenceServiceImpl :
+    SerializablePersistentStateComponent<QuestionPersistenceServiceImpl.QuestionPersistenceState>(
+        QuestionPersistenceState()
+    ), QuestionPersistenceService {
     companion object {
-        fun getInstance(): QuestionPersistenceService = service()
+        fun getInstance(): QuestionPersistenceServiceImpl = service()
     }
 
-    var favorites: List<Int>
+    override var favorites: List<Int>
         get() = state.favorites
         set(value) {
             updateState {

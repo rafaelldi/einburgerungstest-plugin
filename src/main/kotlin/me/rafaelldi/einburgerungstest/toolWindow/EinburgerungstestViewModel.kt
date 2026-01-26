@@ -6,7 +6,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceService
 import me.rafaelldi.einburgerungstest.questions.Question
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 import me.rafaelldi.einburgerungstest.questions.QuestionQuizService
@@ -17,18 +19,22 @@ internal interface EinburgerungstestViewModel : Disposable {
     val currentQuestion: StateFlow<Question?>
     val selectedAnswerIndex: StateFlow<Int?>
     val canGoPrevious: StateFlow<Boolean>
+    val favorites: StateFlow<List<Int>>
 
     fun onStartQuiz()
     fun onCategoryChanged(category: QuestionCategory)
-    fun onAnswerSelected(index: Int)
+    fun onAnswerSelected(answerIndex: Int)
     fun onNextQuestion()
     fun onPreviousQuestion()
     fun onResetQuiz()
+
+    fun onToggleFavorite(questionId: Int)
 }
 
 internal class EinburgerungstestViewModelImpl(
     private val viewModelScope: CoroutineScope,
-    private val questionQuizService: QuestionQuizService
+    private val questionQuizService: QuestionQuizService,
+    private val questionPersistenceService: QuestionPersistenceService
 ) : EinburgerungstestViewModel {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
@@ -46,6 +52,9 @@ internal class EinburgerungstestViewModelImpl(
     private val _canGoPrevious = MutableStateFlow(false)
     override val canGoPrevious: StateFlow<Boolean> = _canGoPrevious.asStateFlow()
 
+    private val _favorites = MutableStateFlow(questionPersistenceService.favorites)
+    override val favorites: StateFlow<List<Int>> = _favorites.asStateFlow()
+
     override fun onStartQuiz() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
@@ -62,9 +71,11 @@ internal class EinburgerungstestViewModelImpl(
         _selectedCategory.value = category
     }
 
-    override fun onAnswerSelected(index: Int) {
-        _selectedAnswerIndex.value = index
-        questionQuizService.saveAnswer(index)
+    override fun onAnswerSelected(answerIndex: Int) {
+        _selectedAnswerIndex.update {
+            questionQuizService.saveAnswer(answerIndex)
+            answerIndex
+        }
     }
 
     override fun onNextQuestion() {
@@ -88,6 +99,18 @@ internal class EinburgerungstestViewModelImpl(
         _currentQuestion.value = null
         _selectedAnswerIndex.value = null
         _canGoPrevious.value = false
+    }
+
+    override fun onToggleFavorite(questionId: Int) {
+        _favorites.update { list ->
+            val updatedList =  if (questionId in list) {
+                list - questionId
+            } else {
+                list + questionId
+            }
+            questionPersistenceService.favorites = updatedList
+            updatedList
+        }
     }
 
     override fun dispose() {
