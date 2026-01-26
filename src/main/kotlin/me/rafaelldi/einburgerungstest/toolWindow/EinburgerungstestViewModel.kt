@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.rafaelldi.einburgerungstest.questions.Question
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
-import me.rafaelldi.einburgerungstest.questions.QuestionService
+import me.rafaelldi.einburgerungstest.questions.QuestionQuizService
 
 internal interface EinburgerungstestViewModel : Disposable {
     val uiState: StateFlow<UiState>
@@ -28,7 +28,7 @@ internal interface EinburgerungstestViewModel : Disposable {
 
 internal class EinburgerungstestViewModelImpl(
     private val viewModelScope: CoroutineScope,
-    private val questionService: QuestionService
+    private val questionQuizService: QuestionQuizService
 ) : EinburgerungstestViewModel {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
@@ -50,8 +50,8 @@ internal class EinburgerungstestViewModelImpl(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            questionService.startQuiz(_selectedCategory.value)
-            val firstQuestion = questionService.nextQuestion()
+            questionQuizService.startQuiz(_selectedCategory.value)
+            val firstQuestion = questionQuizService.nextQuestion()
             _currentQuestion.value = firstQuestion
 
             _uiState.value = UiState.QuestionShowing
@@ -64,23 +64,23 @@ internal class EinburgerungstestViewModelImpl(
 
     override fun onAnswerSelected(index: Int) {
         _selectedAnswerIndex.value = index
-        questionService.saveAnswer(index)
+        questionQuizService.saveAnswer(index)
     }
 
     override fun onNextQuestion() {
-        val nextQuestion = questionService.nextQuestion()
+        val nextQuestion = questionQuizService.nextQuestion()
 
         _currentQuestion.value = nextQuestion
-        _selectedAnswerIndex.value = questionService.getSavedAnswer()
-        _canGoPrevious.value = questionService.hasPrevious()
+        _selectedAnswerIndex.value = questionQuizService.getSavedAnswer()
+        _canGoPrevious.value = questionQuizService.hasPrevious()
     }
 
     override fun onPreviousQuestion() {
-        val previousQuestion = questionService.previousQuestion() ?: return
+        val previousQuestion = questionQuizService.previousQuestion() ?: return
 
         _currentQuestion.value = previousQuestion
-        _selectedAnswerIndex.value = questionService.getSavedAnswer()
-        _canGoPrevious.value = questionService.hasPrevious()
+        _selectedAnswerIndex.value = questionQuizService.getSavedAnswer()
+        _canGoPrevious.value = questionQuizService.hasPrevious()
     }
 
     override fun onResetQuiz() {

@@ -4,7 +4,7 @@ import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 
-internal interface QuestionService {
+internal interface QuestionQuizService {
     fun startQuiz(category: QuestionCategory)
     fun nextQuestion(): Question
     fun previousQuestion(): Question?
@@ -14,9 +14,9 @@ internal interface QuestionService {
 }
 
 @Service(Service.Level.PROJECT)
-internal class QuestionServiceImpl : QuestionService {
+internal class QuestionQuizServiceImpl : QuestionQuizService {
     companion object {
-        fun getInstance(project: Project): QuestionServiceImpl = project.service()
+        fun getInstance(project: Project): QuestionQuizServiceImpl = project.service()
     }
 
     private var currentCategory: QuestionCategory = QuestionCategory.All
