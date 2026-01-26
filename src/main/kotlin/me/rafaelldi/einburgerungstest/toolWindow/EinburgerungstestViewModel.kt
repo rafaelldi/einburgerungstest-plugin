@@ -33,14 +33,14 @@ internal interface EinburgerungstestViewModel : Disposable {
 
 internal class EinburgerungstestViewModelImpl(
     private val viewModelScope: CoroutineScope,
-    private val questionQuizService: QuestionQuizService,
-    private val questionPersistenceService: QuestionPersistenceService
+    private val quizService: QuestionQuizService,
+    private val persistenceService: QuestionPersistenceService
 ) : EinburgerungstestViewModel {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    private val _selectedCategory = MutableStateFlow(QuestionCategory.General)
+    private val _selectedCategory = MutableStateFlow(getSelectedCategoryOrDefault(persistenceService.selectedCategory))
     override val selectedCategory: StateFlow<QuestionCategory> = _selectedCategory.asStateFlow()
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
@@ -52,15 +52,15 @@ internal class EinburgerungstestViewModelImpl(
     private val _canGoPrevious = MutableStateFlow(false)
     override val canGoPrevious: StateFlow<Boolean> = _canGoPrevious.asStateFlow()
 
-    private val _favorites = MutableStateFlow(questionPersistenceService.favorites)
+    private val _favorites = MutableStateFlow(persistenceService.favorites)
     override val favorites: StateFlow<List<Int>> = _favorites.asStateFlow()
 
     override fun onStartQuiz() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
 
-            questionQuizService.startQuiz(_selectedCategory.value)
-            val firstQuestion = questionQuizService.nextQuestion()
+            quizService.startQuiz(_selectedCategory.value)
+            val firstQuestion = quizService.nextQuestion()
             _currentQuestion.value = firstQuestion
 
             _uiState.value = UiState.QuestionShowing
@@ -68,30 +68,33 @@ internal class EinburgerungstestViewModelImpl(
     }
 
     override fun onCategoryChanged(category: QuestionCategory) {
-        _selectedCategory.value = category
+        _selectedCategory.update {
+            persistenceService.selectedCategory = category.name
+            category
+        }
     }
 
     override fun onAnswerSelected(answerIndex: Int) {
         _selectedAnswerIndex.update {
-            questionQuizService.saveAnswer(answerIndex)
+            quizService.saveAnswer(answerIndex)
             answerIndex
         }
     }
 
     override fun onNextQuestion() {
-        val nextQuestion = questionQuizService.nextQuestion()
+        val nextQuestion = quizService.nextQuestion()
 
         _currentQuestion.value = nextQuestion
-        _selectedAnswerIndex.value = questionQuizService.getSavedAnswer()
-        _canGoPrevious.value = questionQuizService.hasPrevious()
+        _selectedAnswerIndex.value = quizService.getSavedAnswer()
+        _canGoPrevious.value = quizService.hasPrevious()
     }
 
     override fun onPreviousQuestion() {
-        val previousQuestion = questionQuizService.previousQuestion() ?: return
+        val previousQuestion = quizService.previousQuestion() ?: return
 
         _currentQuestion.value = previousQuestion
-        _selectedAnswerIndex.value = questionQuizService.getSavedAnswer()
-        _canGoPrevious.value = questionQuizService.hasPrevious()
+        _selectedAnswerIndex.value = quizService.getSavedAnswer()
+        _canGoPrevious.value = quizService.hasPrevious()
     }
 
     override fun onResetQuiz() {
@@ -103,17 +106,24 @@ internal class EinburgerungstestViewModelImpl(
 
     override fun onToggleFavorite(questionId: Int) {
         _favorites.update { list ->
-            val updatedList =  if (questionId in list) {
+            val updatedList = if (questionId in list) {
                 list - questionId
             } else {
                 list + questionId
             }
-            questionPersistenceService.favorites = updatedList
+            persistenceService.favorites = updatedList
             updatedList
         }
     }
 
     override fun dispose() {
         viewModelScope.cancel()
+    }
+
+    companion object {
+        private fun getSelectedCategoryOrDefault(categoryName: String?): QuestionCategory {
+            if (categoryName == null) return QuestionCategory.General
+            return QuestionCategory.valueOf(categoryName)
+        }
     }
 }

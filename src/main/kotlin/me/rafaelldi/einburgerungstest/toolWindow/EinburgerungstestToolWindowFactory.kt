@@ -1,5 +1,6 @@
 package me.rafaelldi.einburgerungstest.toolWindow
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
@@ -16,7 +17,7 @@ internal class EinburgerungstestToolWindowFactory : ToolWindowFactory, DumbAware
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         val questionQuizService = QuestionQuizServiceImpl.getInstance(project)
-        val questionPersistenceService = QuestionPersistenceServiceImpl.getInstance()
+        val questionPersistenceService = service<QuestionPersistenceServiceImpl>()
 
         val viewModel = EinburgerungstestViewModelImpl(
             EinburgerungstestService.getInstance(project).createScope(::EinburgerungstestViewModelImpl.name),

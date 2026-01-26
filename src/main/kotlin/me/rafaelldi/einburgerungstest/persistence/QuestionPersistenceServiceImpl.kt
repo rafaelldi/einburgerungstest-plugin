@@ -4,9 +4,9 @@ import com.intellij.openapi.components.SerializablePersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.State
-import com.intellij.openapi.components.service
 
 internal interface QuestionPersistenceService {
+    var selectedCategory: String?
     var favorites: List<Int>
 }
 
@@ -19,9 +19,14 @@ internal class QuestionPersistenceServiceImpl :
     SerializablePersistentStateComponent<QuestionPersistenceServiceImpl.QuestionPersistenceState>(
         QuestionPersistenceState()
     ), QuestionPersistenceService {
-    companion object {
-        fun getInstance(): QuestionPersistenceServiceImpl = service()
-    }
+
+    override var selectedCategory: String?
+        get() = state.selectedCategory
+        set(value) {
+            updateState {
+                it.copy(selectedCategory = value)
+            }
+        }
 
     override var favorites: List<Int>
         get() = state.favorites
@@ -32,6 +37,7 @@ internal class QuestionPersistenceServiceImpl :
         }
 
     internal data class QuestionPersistenceState(
-        val favorites: List<Int> = emptyList(),
+        @JvmField val selectedCategory: String? = null,
+        @JvmField val favorites: List<Int> = emptyList(),
     )
 }
