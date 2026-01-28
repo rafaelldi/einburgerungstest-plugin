@@ -5,6 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
 import kotlinx.serialization.json.Json
 import me.rafaelldi.einburgerungstest.JsonResourceLoader
+import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceServiceImpl
 
 internal interface QuestionStoreService {
     fun loadQuestions()
@@ -23,6 +24,7 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
     }
 
     private var questionsByCategory: Map<QuestionCategory, List<Question>> = emptyMap()
+    private var questionsById: Map<Int, Question> = emptyMap()
 
     override fun loadQuestions() {
         if (questionsByCategory.isNotEmpty()) return
@@ -30,10 +32,12 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         try {
             val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
             val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
-            questionsByCategory = loadedQuestions.mapIndexed { index, questionDTO ->
+            val questions = loadedQuestions.mapIndexed { index, questionDTO ->
                 val category = QuestionCategory.entries.first { it.displayName == questionDTO.category }
                 Question(index + 1, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
-            }.groupBy { it.category }
+            }
+            questionsByCategory = questions.groupBy { it.category }
+            questionsById = questions.associateBy { it.id }
         } catch (e: Exception) {
             LOG.warn("Failed to load questions", e)
             throw e
@@ -41,6 +45,11 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
     }
 
     override fun getRandomQuestion(category: QuestionCategory): Question {
+        if (category == QuestionCategory.Favorites) {
+            val favoriteQuestionId = service<QuestionPersistenceServiceImpl>().favorites.randomOrNull()
+            return favoriteQuestionId?.let { questionsById[it] } ?: questionsById.values.random()
+        }
+
         val selectedCategory = when (category) {
             QuestionCategory.All -> {
                 QuestionCategory.nonGroupCategories.random()

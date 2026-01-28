@@ -105,21 +105,15 @@ private fun CategoryDropdown(
     Dropdown(
         modifier = modifier,
         menuContent = {
-            selectableItem(
-                selected = selectedCategory == QuestionCategory.All,
-                onClick = {
-                    onCategoryChanged(QuestionCategory.All)
+            QuestionCategory.groupCategories.forEach { category ->
+                selectableItem(
+                    selected = selectedCategory == category,
+                    onClick = {
+                        onCategoryChanged(category)
+                    }
+                ) {
+                    Text(category.displayName)
                 }
-            ) {
-                Text(QuestionCategory.All.displayName)
-            }
-            selectableItem(
-                selected = selectedCategory == QuestionCategory.General,
-                onClick = {
-                    onCategoryChanged(QuestionCategory.General)
-                }
-            ) {
-                Text(QuestionCategory.General.displayName)
             }
 
             separator()

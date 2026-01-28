@@ -9,6 +9,7 @@ internal enum class CategoryGroup {
 internal enum class QuestionCategory(val displayName: String, val group: CategoryGroup) {
     All("All Questions", CategoryGroup.GROUP),
     General("General Questions", CategoryGroup.GROUP),
+    Favorites("Favorites", CategoryGroup.GROUP),
     BildungUndArbeit("Bildung und Arbeit", CategoryGroup.NATIONAL),
     BundUndLaender("Bund und Länder", CategoryGroup.NATIONAL),
     EuropaUndWelt("Europa und Welt", CategoryGroup.NATIONAL),
@@ -37,7 +38,10 @@ internal enum class QuestionCategory(val displayName: String, val group: Categor
     Thueringen("Thüringen", CategoryGroup.REGIONAL);
 
     companion object {
-        val nonGroupCategories : List<QuestionCategory> =
+        val groupCategories: List<QuestionCategory> =
+            entries.filter { it.group == CategoryGroup.GROUP }.toList()
+
+        val nonGroupCategories: List<QuestionCategory> =
             entries.filter { it.group != CategoryGroup.GROUP }.toList()
 
         val nationalCategories: List<QuestionCategory> =
