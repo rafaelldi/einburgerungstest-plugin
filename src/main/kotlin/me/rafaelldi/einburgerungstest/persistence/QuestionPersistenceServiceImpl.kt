@@ -2,12 +2,12 @@ package me.rafaelldi.einburgerungstest.persistence
 
 import com.intellij.openapi.components.SerializablePersistentStateComponent
 import com.intellij.openapi.components.Service
-import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.State
+import com.intellij.openapi.components.Storage
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 
 internal interface QuestionPersistenceService {
-    var selectedCategory: String
+    var selectedCategory: QuestionCategory
     var favorites: List<Int>
 }
 
@@ -21,7 +21,7 @@ internal class QuestionPersistenceServiceImpl :
         QuestionPersistenceState()
     ), QuestionPersistenceService {
 
-    override var selectedCategory: String
+    override var selectedCategory: QuestionCategory
         get() = state.selectedCategory
         set(value) {
             updateState {
@@ -38,7 +38,7 @@ internal class QuestionPersistenceServiceImpl :
         }
 
     internal data class QuestionPersistenceState(
-        @JvmField val selectedCategory: String = QuestionCategory.General.name,
+        @JvmField val selectedCategory: QuestionCategory = QuestionCategory.General,
         @JvmField val favorites: List<Int> = emptyList(),
     )
 }

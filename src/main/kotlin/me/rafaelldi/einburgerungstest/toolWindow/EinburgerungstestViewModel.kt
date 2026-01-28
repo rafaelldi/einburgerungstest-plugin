@@ -6,7 +6,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceService
 import me.rafaelldi.einburgerungstest.questions.Question
@@ -40,7 +40,7 @@ internal class EinburgerungstestViewModelImpl(
     private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    private val _selectedCategory = MutableStateFlow(QuestionCategory.valueOf(persistence.selectedCategory))
+    private val _selectedCategory = MutableStateFlow(persistence.selectedCategory)
     override val selectedCategory: StateFlow<QuestionCategory> = _selectedCategory.asStateFlow()
 
     private val _currentQuestion = MutableStateFlow<Question?>(null)
@@ -68,17 +68,13 @@ internal class EinburgerungstestViewModelImpl(
     }
 
     override fun onCategoryChanged(category: QuestionCategory) {
-        _selectedCategory.update {
-            persistence.selectedCategory = category.name
-            category
-        }
+        _selectedCategory.value = category
+        persistence.selectedCategory = category
     }
 
     override fun onAnswerSelected(answerIndex: Int) {
-        _selectedAnswerIndex.update {
-            quizService.saveAnswer(answerIndex)
-            answerIndex
-        }
+        _selectedAnswerIndex.value = answerIndex
+        quizService.saveAnswer(answerIndex)
     }
 
     override fun onNextQuestion() {
@@ -105,15 +101,15 @@ internal class EinburgerungstestViewModelImpl(
     }
 
     override fun onToggleFavorite(questionId: Int) {
-        _favorites.update { list ->
+        val list = _favorites.updateAndGet { list ->
             val updatedList = if (questionId in list) {
                 list - questionId
             } else {
                 list + questionId
             }
-            persistence.favorites = updatedList
             updatedList
         }
+        persistence.favorites = list
     }
 
     override fun dispose() {
