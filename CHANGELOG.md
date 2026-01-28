@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-01-28
+
 ### Added
 
 - General question category
