@@ -39,7 +39,13 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
             val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
             val questions = loadedQuestions.mapIndexed { index, questionDTO ->
                 val category = QuestionCategory.entries.first { it.displayName == questionDTO.category }
-                Question(index + 1, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
+                val image = questionDTO.img?.let {
+                    QuestionImage(
+                        resourcePath = "/data/img/${it.url}.png",
+                        attributionText = it.text
+                    )
+                }
+                Question(index + 1, questionDTO.question, questionDTO.answers, questionDTO.correct, category, image)
             }
             questionsById = questions.associateBy { it.id }
             generalQuestions = questions.filter { it.category.group == CategoryGroup.NATIONAL }
