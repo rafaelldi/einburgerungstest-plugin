@@ -3,12 +3,14 @@ package me.rafaelldi.einburgerungstest.questions
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.rafaelldi.einburgerungstest.JsonResourceLoader
 import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceServiceImpl
 
 internal interface QuestionStoreService {
-    fun loadQuestions()
+    suspend fun loadQuestions()
     fun getRandomQuestion(category: QuestionCategory): Question
 }
 
@@ -23,21 +25,25 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         ignoreUnknownKeys = true
     }
 
-    private var questionsByCategory: Map<QuestionCategory, List<Question>> = emptyMap()
     private var questionsById: Map<Int, Question> = emptyMap()
+    private var generalQuestions: List<Question> = emptyList()
+    private var questionsByCategory: Map<QuestionCategory, List<Question>> = emptyMap()
 
-    override fun loadQuestions() {
+    override suspend fun loadQuestions() {
         if (questionsByCategory.isNotEmpty()) return
 
         try {
-            val jsonContent = JsonResourceLoader.loadJson("/data/questions.json") ?: return
+            val jsonContent = withContext(Dispatchers.IO) {
+                JsonResourceLoader.loadJson("/data/questions.json")
+            } ?: return
             val loadedQuestions = json.decodeFromString<List<QuestionDTO>>(jsonContent)
             val questions = loadedQuestions.mapIndexed { index, questionDTO ->
                 val category = QuestionCategory.entries.first { it.displayName == questionDTO.category }
                 Question(index + 1, questionDTO.question, questionDTO.answers, questionDTO.correct, category)
             }
-            questionsByCategory = questions.groupBy { it.category }
             questionsById = questions.associateBy { it.id }
+            generalQuestions = questions.filter { it.category.group == CategoryGroup.NATIONAL }
+            questionsByCategory = questions.groupBy { it.category }
         } catch (e: Exception) {
             LOG.warn("Failed to load questions", e)
             throw e
@@ -50,17 +56,14 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
             return favoriteQuestionId?.let { questionsById[it] } ?: questionsById.values.random()
         }
 
-        val selectedCategory = when (category) {
-            QuestionCategory.All -> {
-                QuestionCategory.nonGroupCategories.random()
-            }
-
-            QuestionCategory.General -> {
-                QuestionCategory.nationalCategories.random()
-            }
-
-            else -> category
+        if (category == QuestionCategory.All) {
+            return questionsById.values.random()
         }
-        return requireNotNull(questionsByCategory[selectedCategory]).random()
+
+        if (category == QuestionCategory.General) {
+            return generalQuestions.random()
+        }
+
+        return requireNotNull(questionsByCategory[category]).random()
     }
 }

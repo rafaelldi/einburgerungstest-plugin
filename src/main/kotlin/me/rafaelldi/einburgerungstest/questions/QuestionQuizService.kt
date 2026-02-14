@@ -5,7 +5,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 
 internal interface QuestionQuizService {
-    fun startQuiz(category: QuestionCategory)
+    suspend fun startQuiz(category: QuestionCategory)
     fun nextQuestion(): Question
     fun previousQuestion(): Question?
     fun hasPrevious(): Boolean
@@ -24,7 +24,7 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
     private var currentIndex: Int = -1
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()
 
-    override fun startQuiz(category: QuestionCategory) {
+    override suspend fun startQuiz(category: QuestionCategory) {
         currentCategory = category
         questionHistory.clear()
         currentIndex = -1

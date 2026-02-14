@@ -41,9 +41,6 @@ internal enum class QuestionCategory(val displayName: String, val group: Categor
         val groupCategories: List<QuestionCategory> =
             entries.filter { it.group == CategoryGroup.GROUP }.toList()
 
-        val nonGroupCategories: List<QuestionCategory> =
-            entries.filter { it.group != CategoryGroup.GROUP }.toList()
-
         val nationalCategories: List<QuestionCategory> =
             entries.filter { it.group == CategoryGroup.NATIONAL }
 
