@@ -1,13 +1,14 @@
 package me.rafaelldi.einburgerungstest.questions
 
+import androidx.compose.ui.graphics.ImageBitmap
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 
 internal interface QuestionQuizService {
     suspend fun startQuiz(category: QuestionCategory)
-    fun nextQuestion(): Question
-    fun previousQuestion(): Question?
+    fun nextQuestion(): Pair<Question, ImageBitmap?>
+    fun previousQuestion(): Pair<Question, ImageBitmap?>?
     fun hasPrevious(): Boolean
     fun getSavedAnswer(): Int?
     fun saveAnswer(answerIndex: Int)
@@ -20,7 +21,7 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
     }
 
     private var currentCategory: QuestionCategory = QuestionCategory.General
-    private val questionHistory: MutableList<Question> = mutableListOf()
+    private val questionHistory: MutableList<Pair<Question, ImageBitmap?>> = mutableListOf()
     private var currentIndex: Int = -1
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()
 
@@ -32,7 +33,7 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
         QuestionStoreServiceImpl.getInstance().loadQuestions()
     }
 
-    override fun nextQuestion(): Question {
+    override fun nextQuestion(): Pair<Question, ImageBitmap?> {
         if (currentIndex < questionHistory.size - 1) {
             currentIndex++
         } else {
@@ -43,7 +44,7 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
         return questionHistory[currentIndex]
     }
 
-    override fun previousQuestion(): Question? {
+    override fun previousQuestion(): Pair<Question, ImageBitmap?>? {
         if (currentIndex <= 0) return null
         currentIndex--
         return questionHistory[currentIndex]

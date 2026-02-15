@@ -1,5 +1,6 @@
 package me.rafaelldi.einburgerungstest.toolWindow
 
+import androidx.compose.ui.graphics.ImageBitmap
 import com.intellij.openapi.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -16,7 +17,7 @@ import me.rafaelldi.einburgerungstest.questions.QuestionQuizService
 internal interface EinburgerungstestViewModel : Disposable {
     val uiState: StateFlow<UiState>
     val selectedCategory: StateFlow<QuestionCategory>
-    val currentQuestion: StateFlow<Question?>
+    val currentQuestion: StateFlow<Pair<Question, ImageBitmap?>?>
     val selectedAnswerIndex: StateFlow<Int?>
     val canGoPrevious: StateFlow<Boolean>
     val favorites: StateFlow<List<Int>>
@@ -43,8 +44,8 @@ internal class EinburgerungstestViewModelImpl(
     private val _selectedCategory = MutableStateFlow(persistence.selectedCategory)
     override val selectedCategory: StateFlow<QuestionCategory> = _selectedCategory.asStateFlow()
 
-    private val _currentQuestion = MutableStateFlow<Question?>(null)
-    override val currentQuestion: StateFlow<Question?> = _currentQuestion.asStateFlow()
+    private val _currentQuestion = MutableStateFlow<Pair<Question, ImageBitmap?>?>(null)
+    override val currentQuestion: StateFlow<Pair<Question, ImageBitmap?>?> = _currentQuestion.asStateFlow()
 
     private val _selectedAnswerIndex = MutableStateFlow<Int?>(null)
     override val selectedAnswerIndex: StateFlow<Int?> = _selectedAnswerIndex.asStateFlow()

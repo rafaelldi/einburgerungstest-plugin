@@ -20,7 +20,7 @@ import org.jetbrains.jewel.ui.component.*
 @Composable
 internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val uiState by viewModel.uiState.collectAsState()
-    val currentQuestion by viewModel.currentQuestion.collectAsState()
+    val currentQuestionPair by viewModel.currentQuestion.collectAsState()
     val selectedAnswerIndex by viewModel.selectedAnswerIndex.collectAsState()
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
@@ -59,7 +59,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
 
         UiState.QuestionShowing -> {
             val focusRequester = FocusRequester()
-            LaunchedEffect(currentQuestion) {
+            LaunchedEffect(currentQuestionPair) {
                 focusRequester.requestFocus()
             }
             Column(
@@ -88,9 +88,10 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                     .focusable(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                currentQuestion?.let { question ->
+                currentQuestionPair?.let { (question, imageBitmap) ->
                     QuestionCard(
                         question = question,
+                        imageBitmap = imageBitmap,
                         selectedAnswerIndex = selectedAnswerIndex,
                         correctAnswerIndex = question.correctAnswer,
                         favorites = favorites,

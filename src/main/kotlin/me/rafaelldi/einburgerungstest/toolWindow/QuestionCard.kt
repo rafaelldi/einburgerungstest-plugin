@@ -13,29 +13,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.intellij.ui.JBColor
 import com.intellij.util.ui.UIUtil
-import me.rafaelldi.einburgerungstest.JsonResourceLoader
 import me.rafaelldi.einburgerungstest.MyBundle
 import me.rafaelldi.einburgerungstest.questions.Question
 import org.jetbrains.jewel.bridge.toComposeColor
 import org.jetbrains.jewel.ui.component.IconActionButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
-import org.jetbrains.skia.Image as SkiaImage
 
 @Composable
 internal fun QuestionCard(
     question: Question,
+    imageBitmap: ImageBitmap?,
     selectedAnswerIndex: Int?,
     correctAnswerIndex: Int?,
     favorites: List<Int>,
@@ -81,25 +78,22 @@ internal fun QuestionCard(
 
         }
 
-        question.image?.let { image ->
-            val bitmap = rememberQuestionImage(image.resourcePath)
-            if (bitmap != null) {
-                Image(
-                    bitmap = bitmap,
-                    contentDescription = image.attributionText,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 400.dp)
-                        .padding(bottom = 8.dp)
+        if (imageBitmap != null) {
+            Image(
+                bitmap = imageBitmap,
+                contentDescription = question.image?.attributionText,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 400.dp)
+                    .padding(bottom = 8.dp)
+            )
+            question.image?.attributionText?.let { text ->
+                Text(
+                    text = text,
+                    fontWeight = FontWeight.Light,
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
-                image.attributionText?.let { text ->
-                    Text(
-                        text = text,
-                        fontWeight = FontWeight.Light,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
             }
         }
 
@@ -148,14 +142,5 @@ internal fun QuestionCard(
                 .align(Alignment.End)
                 .padding(top = 16.dp),
         )
-    }
-}
-
-@Composable
-private fun rememberQuestionImage(resourcePath: String): ImageBitmap? {
-    return remember(resourcePath) {
-        JsonResourceLoader::class.java.getResourceAsStream(resourcePath)
-            ?.readBytes()
-            ?.let { SkiaImage.makeFromEncoded(it).toComposeImageBitmap() }
     }
 }

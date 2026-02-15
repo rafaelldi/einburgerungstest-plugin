@@ -1,5 +1,7 @@
 package me.rafaelldi.einburgerungstest.questions
 
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.diagnostic.logger
@@ -8,10 +10,12 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.rafaelldi.einburgerungstest.JsonResourceLoader
 import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceServiceImpl
+import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.skia.Image as SkiaImage
 
 internal interface QuestionStoreService {
     suspend fun loadQuestions()
-    fun getRandomQuestion(category: QuestionCategory): Question
+    fun getRandomQuestion(category: QuestionCategory): Pair<Question, ImageBitmap?>
 }
 
 @Service(Service.Level.APP)
@@ -24,6 +28,8 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
     private val json = Json {
         ignoreUnknownKeys = true
     }
+
+    private val imageCache = ConcurrentHashMap<String, ImageBitmap>()
 
     private var questionsById: Map<Int, Question> = emptyMap()
     private var generalQuestions: List<Question> = emptyList()
@@ -56,20 +62,34 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         }
     }
 
-    override fun getRandomQuestion(category: QuestionCategory): Question {
+    override fun getRandomQuestion(category: QuestionCategory): Pair<Question, ImageBitmap?> {
         if (category == QuestionCategory.Favorites) {
             val favoriteQuestionId = service<QuestionPersistenceServiceImpl>().favorites.randomOrNull()
-            return favoriteQuestionId?.let { questionsById[it] } ?: questionsById.values.random()
+            val question = favoriteQuestionId?.let { questionsById[it] } ?: questionsById.values.random()
+            return withImage(question)
         }
 
         if (category == QuestionCategory.All) {
-            return questionsById.values.random()
+            return withImage(questionsById.values.random())
         }
 
         if (category == QuestionCategory.General) {
-            return generalQuestions.random()
+            return withImage(generalQuestions.random())
         }
 
-        return requireNotNull(questionsByCategory[category]).random()
+        return withImage(requireNotNull(questionsByCategory[category]).random())
+    }
+
+    private fun loadImage(resourcePath: String): ImageBitmap? {
+        return imageCache.getOrPut(resourcePath) {
+            JsonResourceLoader::class.java.getResourceAsStream(resourcePath)
+                ?.readBytes()
+                ?.let { SkiaImage.makeFromEncoded(it).toComposeImageBitmap() }
+                ?: return null
+        }
+    }
+
+    private fun withImage(question: Question): Pair<Question, ImageBitmap?> {
+        return question to question.image?.let { loadImage(it.resourcePath) }
     }
 }
