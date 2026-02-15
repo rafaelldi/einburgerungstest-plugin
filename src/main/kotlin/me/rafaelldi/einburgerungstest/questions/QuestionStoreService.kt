@@ -17,6 +17,7 @@ internal interface QuestionStoreService {
     suspend fun loadQuestions()
     fun getQuestionCount(category: QuestionCategory): Int
     fun getRandomQuestion(category: QuestionCategory): Pair<Question, ImageBitmap?>
+    fun getRandomQuestion(category: QuestionCategory, excludeIds: Set<Int>): Pair<Question, ImageBitmap?>?
 }
 
 @Service(Service.Level.APP)
@@ -67,6 +68,7 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         return when (category) {
             QuestionCategory.All -> questionsById.size
             QuestionCategory.General -> generalQuestions.size
+            QuestionCategory.Favorites -> service<QuestionPersistenceServiceImpl>().favorites.size
             else -> questionsByCategory[category]?.size ?: 0
         }
     }
@@ -87,6 +89,25 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         }
 
         return withImage(requireNotNull(questionsByCategory[category]).random())
+    }
+
+    override fun getRandomQuestion(category: QuestionCategory, excludeIds: Set<Int>): Pair<Question, ImageBitmap?>? {
+        if (category == QuestionCategory.Favorites) {
+            val favoriteIds = service<QuestionPersistenceServiceImpl>().favorites
+            val remaining = favoriteIds.filter { it !in excludeIds }
+            val question = remaining.randomOrNull()?.let { questionsById[it] } ?: return null
+            return withImage(question)
+        }
+
+        val pool = when (category) {
+            QuestionCategory.All -> questionsById.values
+            QuestionCategory.General -> generalQuestions
+            else -> questionsByCategory[category] ?: return null
+        }
+
+        val remaining = pool.filter { it.id !in excludeIds }
+        if (remaining.isEmpty()) return null
+        return withImage(remaining.random())
     }
 
     private fun loadImage(resourcePath: String): ImageBitmap? {

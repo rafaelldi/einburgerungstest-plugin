@@ -10,6 +10,10 @@
 - Keyboard navigation
 - Show the number of questions in each category
 
+### Changed
+
+- Do not show the same question twice
+
 ## [1.1.0] - 2026-01-28
 
 ### Added

@@ -24,6 +24,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val questionCategories by viewModel.questionCategories.collectAsState()
     val currentQuestionPair by viewModel.currentQuestion.collectAsState()
     val selectedAnswerIndex by viewModel.selectedAnswerIndex.collectAsState()
+    val canGoNext by viewModel.canGoNext.collectAsState()
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
@@ -81,9 +82,9 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                                 Key.Two -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(1); true } else false
                                 Key.Three -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(2); true } else false
                                 Key.Four -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(3); true } else false
-                                Key.DirectionRight -> { viewModel.onNextQuestion(); true }
-                                Key.Enter -> { viewModel.onNextQuestion(); true }
-                                Key.Spacebar -> { viewModel.onNextQuestion(); true }
+                                Key.DirectionRight -> if (canGoNext) { viewModel.onNextQuestion(); true } else false
+                                Key.Enter -> if (canGoNext) { viewModel.onNextQuestion(); true } else false
+                                Key.Spacebar -> if (canGoNext) { viewModel.onNextQuestion(); true } else false
                                 Key.DirectionLeft -> if (canGoPrevious) { viewModel.onPreviousQuestion(); true } else false
                                 Key.Backspace -> if (canGoPrevious) { viewModel.onPreviousQuestion(); true } else false
                                 else -> false
@@ -121,7 +122,8 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                             Text(MyBundle.message("einburgerungstest.tab.startOver.button"))
                         }
                         DefaultButton(
-                            onClick = { viewModel.onNextQuestion() }
+                            onClick = { viewModel.onNextQuestion() },
+                            enabled = canGoNext
                         ) {
                             Text(MyBundle.message("einburgerungstest.tab.next.button"))
                         }
