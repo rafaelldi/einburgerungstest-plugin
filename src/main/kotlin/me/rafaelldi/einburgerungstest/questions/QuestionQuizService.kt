@@ -4,9 +4,11 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceServiceImpl
 
 internal interface QuestionQuizService {
     suspend fun loadQuestions()
+    fun getQuestionCount(category: QuestionCategory): Int
     fun startQuiz(category: QuestionCategory)
     fun nextQuestion(): Pair<Question, ImageBitmap?>
     fun previousQuestion(): Pair<Question, ImageBitmap?>?
@@ -28,6 +30,13 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
 
     override suspend fun loadQuestions() {
         QuestionStoreServiceImpl.getInstance().loadQuestions()
+    }
+
+    override fun getQuestionCount(category: QuestionCategory): Int {
+        if (category == QuestionCategory.Favorites) {
+            return service<QuestionPersistenceServiceImpl>().favorites.size
+        }
+        return QuestionStoreServiceImpl.getInstance().getQuestionCount(category)
     }
 
     override fun startQuiz(category: QuestionCategory) {

@@ -7,9 +7,12 @@ internal enum class CategoryGroup {
 }
 
 internal enum class QuestionCategory(val displayName: String, val group: CategoryGroup) {
+    //Group
     All("All Questions", CategoryGroup.GROUP),
     General("General Questions", CategoryGroup.GROUP),
     Favorites("Favorites", CategoryGroup.GROUP),
+
+    //National
     BildungUndArbeit("Bildung und Arbeit", CategoryGroup.NATIONAL),
     BundUndLaender("Bund und Länder", CategoryGroup.NATIONAL),
     EuropaUndWelt("Europa und Welt", CategoryGroup.NATIONAL),
@@ -20,6 +23,8 @@ internal enum class QuestionCategory(val displayName: String, val group: Categor
     ReligionUndKultur("Religion und Kultur", CategoryGroup.NATIONAL),
     Staat("Staat", CategoryGroup.NATIONAL),
     Wirtschaft("Wirtschaft", CategoryGroup.NATIONAL),
+
+    //Regional
     BadenWuerttemberg("Baden-Württemberg", CategoryGroup.REGIONAL),
     Bayern("Bayern", CategoryGroup.REGIONAL),
     Berlin("Berlin", CategoryGroup.REGIONAL),

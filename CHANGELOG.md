@@ -8,6 +8,7 @@
 
 - Show question images
 - Keyboard navigation
+- Show the number of questions in each category
 
 ## [1.1.0] - 2026-01-28
 

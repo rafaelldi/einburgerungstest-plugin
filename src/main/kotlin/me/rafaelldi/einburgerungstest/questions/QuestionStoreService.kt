@@ -15,6 +15,7 @@ import org.jetbrains.skia.Image as SkiaImage
 
 internal interface QuestionStoreService {
     suspend fun loadQuestions()
+    fun getQuestionCount(category: QuestionCategory): Int
     fun getRandomQuestion(category: QuestionCategory): Pair<Question, ImageBitmap?>
 }
 
@@ -59,6 +60,14 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
         } catch (e: Exception) {
             LOG.warn("Failed to load questions", e)
             throw e
+        }
+    }
+
+    override fun getQuestionCount(category: QuestionCategory): Int {
+        return when (category) {
+            QuestionCategory.All -> questionsById.size
+            QuestionCategory.General -> generalQuestions.size
+            else -> questionsByCategory[category]?.size ?: 0
         }
     }
 

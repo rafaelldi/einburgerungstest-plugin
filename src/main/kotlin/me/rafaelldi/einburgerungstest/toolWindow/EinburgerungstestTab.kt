@@ -13,6 +13,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import me.rafaelldi.einburgerungstest.MyBundle
+import me.rafaelldi.einburgerungstest.questions.QuestionCategories
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 import org.jetbrains.jewel.foundation.ExperimentalJewelApi
 import org.jetbrains.jewel.ui.component.*
@@ -20,6 +21,7 @@ import org.jetbrains.jewel.ui.component.*
 @Composable
 internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val uiState by viewModel.uiState.collectAsState()
+    val questionCategories by viewModel.questionCategories.collectAsState()
     val currentQuestionPair by viewModel.currentQuestion.collectAsState()
     val selectedAnswerIndex by viewModel.selectedAnswerIndex.collectAsState()
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
@@ -52,6 +54,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                     CategoryDropdown(
                         modifier = Modifier.width(250.dp),
                         selectedCategory = selectedCategory,
+                        questionCategories = questionCategories,
                         onCategoryChanged = { viewModel.onCategoryChanged(it) }
                     )
                     DefaultButton(onClick = { viewModel.onStartQuiz() }) {
@@ -135,45 +138,46 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
 private fun CategoryDropdown(
     modifier: Modifier = Modifier,
     selectedCategory: QuestionCategory,
+    questionCategories: QuestionCategories,
     onCategoryChanged: (QuestionCategory) -> Unit
 ) {
     Dropdown(
         modifier = modifier,
         menuContent = {
-            QuestionCategory.groupCategories.forEach { category ->
+            questionCategories.groupCategories.forEach { (category, count) ->
                 selectableItem(
                     selected = selectedCategory == category,
                     onClick = {
                         onCategoryChanged(category)
                     }
                 ) {
-                    Text(category.displayName)
+                    Text("${category.displayName} ($count)")
                 }
             }
 
             separator()
 
-            QuestionCategory.nationalCategories.forEach { category ->
+            questionCategories.nationalCategories.forEach { (category, count) ->
                 selectableItem(
                     selected = selectedCategory == category,
                     onClick = {
                         onCategoryChanged(category)
                     }
                 ) {
-                    Text(category.displayName)
+                    Text("${category.displayName} ($count)")
                 }
             }
 
             separator()
 
-            QuestionCategory.regionalCategories.forEach { category ->
+            questionCategories.regionalCategories.forEach { (category, count) ->
                 selectableItem(
                     selected = selectedCategory == category,
                     onClick = {
                         onCategoryChanged(category)
                     }
                 ) {
-                    Text(category.displayName)
+                    Text("${category.displayName} ($count)")
                 }
             }
         }
