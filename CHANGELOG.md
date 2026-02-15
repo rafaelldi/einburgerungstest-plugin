@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-02-15
+
 ### Added
 
 - Show question images
@@ -27,3 +29,8 @@
 ### Added
 
 - Initial release
+
+[Unreleased]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/rafaelldi/einburgerungstest-plugin/commits/v1.0.0
