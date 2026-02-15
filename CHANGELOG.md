@@ -9,6 +9,7 @@
 - Show question images
 - Keyboard navigation
 - Show the number of questions in each category
+- Show question statistics
 
 ### Changed
 

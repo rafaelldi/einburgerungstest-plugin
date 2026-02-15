@@ -28,6 +28,8 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
+    val correctAnswers by viewModel.correctAnswers.collectAsState()
+    val wrongAnswers by viewModel.wrongAnswers.collectAsState()
 
     LaunchedEffect(Unit) {
         viewModel.loadQuestions()
@@ -131,7 +133,9 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                         imageBitmap = imageBitmap,
                         selectedAnswerIndex = selectedAnswerIndex,
                         correctAnswerIndex = question.correctAnswer,
-                        favorites = favorites,
+                        correctAnswerCount = correctAnswers[question.id] ?: 0,
+                        wrongAnswerCount = wrongAnswers[question.id] ?: 0,
+                        isFavorite = question.id in favorites,
                         onAnswerSelected = { viewModel.onAnswerSelected(question, it) },
                         onFavoriteToggled = { viewModel.onToggleFavorite(it) }
                     )

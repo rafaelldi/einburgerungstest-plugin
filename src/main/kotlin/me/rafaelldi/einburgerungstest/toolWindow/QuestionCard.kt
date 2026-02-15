@@ -25,6 +25,7 @@ import com.intellij.util.ui.UIUtil
 import me.rafaelldi.einburgerungstest.MyBundle
 import me.rafaelldi.einburgerungstest.questions.Question
 import org.jetbrains.jewel.bridge.toComposeColor
+import org.jetbrains.jewel.ui.component.Icon
 import org.jetbrains.jewel.ui.component.IconActionButton
 import org.jetbrains.jewel.ui.component.Text
 import org.jetbrains.jewel.ui.icons.AllIconsKeys
@@ -35,7 +36,9 @@ internal fun QuestionCard(
     imageBitmap: ImageBitmap?,
     selectedAnswerIndex: Int?,
     correctAnswerIndex: Int?,
-    favorites: List<Int>,
+    correctAnswerCount: Int,
+    wrongAnswerCount: Int,
+    isFavorite: Boolean,
     onAnswerSelected: (Int) -> Unit,
     onFavoriteToggled: (Int) -> Unit
 ) {
@@ -69,14 +72,14 @@ internal fun QuestionCard(
             Spacer(modifier = Modifier.width(20.dp))
 
             IconActionButton(
-                key = if (question.id in favorites) AllIconsKeys.Nodes.Favorite else AllIconsKeys.Nodes.NotFavoriteOnHover,
+                key = if (isFavorite) AllIconsKeys.Nodes.Favorite else AllIconsKeys.Nodes.NotFavoriteOnHover,
                 contentDescription = null,
                 onClick = {
                     onFavoriteToggled(question.id)
                 }
             )
-
         }
+
 
         if (imageBitmap != null) {
             Image(
@@ -131,16 +134,32 @@ internal fun QuestionCard(
             }
         }
 
-        Text(
-            text = MyBundle.message(
-                "einburgerungstest.question.card.footer",
-                question.id,
-                question.category.displayName
-            ),
-            fontWeight = FontWeight.Light,
+        Row(
             modifier = Modifier
-                .align(Alignment.End)
+                .fillMaxWidth()
                 .padding(top = 16.dp),
-        )
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = MyBundle.message(
+                    "einburgerungstest.question.card.footer",
+                    question.id,
+                    question.category.displayName
+                ),
+                fontWeight = FontWeight.Light,
+            )
+            Spacer(Modifier.weight(1f))
+            Icon(AllIconsKeys.Ide.LikeDimmed, contentDescription = null)
+            Text(
+                text = " $correctAnswerCount",
+                fontWeight = FontWeight.Light,
+                modifier = Modifier.padding(end = 8.dp)
+            )
+            Icon(AllIconsKeys.Ide.DislikeDimmed, contentDescription = null)
+            Text(
+                text = " $wrongAnswerCount",
+                fontWeight = FontWeight.Light,
+            )
+        }
     }
 }
