@@ -77,16 +77,44 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                     .padding(16.dp)
                     .onKeyEvent { event ->
                         if (event.type == KeyEventType.KeyDown) {
+                            val currentQuestion = currentQuestionPair?.first
                             when (event.key) {
-                                Key.One -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(0); true } else false
-                                Key.Two -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(1); true } else false
-                                Key.Three -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(2); true } else false
-                                Key.Four -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(3); true } else false
-                                Key.DirectionRight -> if (canGoNext) { viewModel.onNextQuestion(); true } else false
-                                Key.Enter -> if (canGoNext) { viewModel.onNextQuestion(); true } else false
-                                Key.Spacebar -> if (canGoNext) { viewModel.onNextQuestion(); true } else false
-                                Key.DirectionLeft -> if (canGoPrevious) { viewModel.onPreviousQuestion(); true } else false
-                                Key.Backspace -> if (canGoPrevious) { viewModel.onPreviousQuestion(); true } else false
+                                Key.One -> if (selectedAnswerIndex == null && currentQuestion != null) {
+                                    viewModel.onAnswerSelected(currentQuestion, 0); true
+                                } else false
+
+                                Key.Two -> if (selectedAnswerIndex == null && currentQuestion != null) {
+                                    viewModel.onAnswerSelected(currentQuestion, 1); true
+                                } else false
+
+                                Key.Three -> if (selectedAnswerIndex == null && currentQuestion != null) {
+                                    viewModel.onAnswerSelected(currentQuestion, 2); true
+                                } else false
+
+                                Key.Four -> if (selectedAnswerIndex == null && currentQuestion != null) {
+                                    viewModel.onAnswerSelected(currentQuestion, 3); true
+                                } else false
+
+                                Key.DirectionRight -> if (canGoNext) {
+                                    viewModel.onNextQuestion(); true
+                                } else false
+
+                                Key.Enter -> if (canGoNext) {
+                                    viewModel.onNextQuestion(); true
+                                } else false
+
+                                Key.Spacebar -> if (canGoNext) {
+                                    viewModel.onNextQuestion(); true
+                                } else false
+
+                                Key.DirectionLeft -> if (canGoPrevious) {
+                                    viewModel.onPreviousQuestion(); true
+                                } else false
+
+                                Key.Backspace -> if (canGoPrevious) {
+                                    viewModel.onPreviousQuestion(); true
+                                } else false
+
                                 else -> false
                             }
                         } else {
@@ -104,7 +132,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                         selectedAnswerIndex = selectedAnswerIndex,
                         correctAnswerIndex = question.correctAnswer,
                         favorites = favorites,
-                        onAnswerSelected = { viewModel.onAnswerSelected(it) },
+                        onAnswerSelected = { viewModel.onAnswerSelected(question, it) },
                         onFavoriteToggled = { viewModel.onToggleFavorite(it) }
                     )
 

@@ -9,6 +9,8 @@ import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 internal interface QuestionPersistenceService {
     var selectedCategory: QuestionCategory
     var favorites: List<Int>
+    var correctAnswers: Map<Int, Int>
+    var wrongAnswers: Map<Int, Int>
 }
 
 @Service
@@ -37,8 +39,26 @@ internal class QuestionPersistenceServiceImpl :
             }
         }
 
+    override var correctAnswers: Map<Int, Int>
+        get() = state.correctAnswers
+        set(value) {
+            updateState {
+                it.copy(correctAnswers = value)
+            }
+        }
+
+    override var wrongAnswers: Map<Int, Int>
+        get() = state.wrongAnswers
+        set(value) {
+            updateState {
+                it.copy(wrongAnswers = value)
+            }
+        }
+
     internal data class QuestionPersistenceState(
         @JvmField val selectedCategory: QuestionCategory = QuestionCategory.General,
         @JvmField val favorites: List<Int> = emptyList(),
+        @JvmField val correctAnswers: Map<Int, Int> = emptyMap(),
+        @JvmField val wrongAnswers: Map<Int, Int> = emptyMap(),
     )
 }

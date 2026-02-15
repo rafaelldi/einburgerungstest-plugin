@@ -4,11 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.intellij.openapi.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.updateAndGet
+import kotlinx.coroutines.flow.*
 import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceService
 import me.rafaelldi.einburgerungstest.questions.Question
 import me.rafaelldi.einburgerungstest.questions.QuestionCategories
@@ -24,11 +20,13 @@ internal interface EinburgerungstestViewModel : Disposable {
     val canGoNext: StateFlow<Boolean>
     val canGoPrevious: StateFlow<Boolean>
     val favorites: StateFlow<List<Int>>
+    val correctAnswers: StateFlow<Map<Int, Int>>
+    val wrongAnswers: StateFlow<Map<Int, Int>>
 
     suspend fun loadQuestions()
     fun onStartQuiz()
     fun onCategoryChanged(category: QuestionCategory)
-    fun onAnswerSelected(answerIndex: Int)
+    fun onAnswerSelected(question: Question, selectedAnswer: Int)
     fun onNextQuestion()
     fun onPreviousQuestion()
     fun onResetQuiz()
@@ -66,6 +64,12 @@ internal class EinburgerungstestViewModelImpl(
     private val _favorites = MutableStateFlow(persistence.favorites)
     override val favorites: StateFlow<List<Int>> = _favorites.asStateFlow()
 
+    private val _correctAnswers = MutableStateFlow(persistence.correctAnswers)
+    override val correctAnswers: StateFlow<Map<Int, Int>> = _correctAnswers.asStateFlow()
+
+    private val _wrongAnswers = MutableStateFlow(persistence.wrongAnswers)
+    override val wrongAnswers: StateFlow<Map<Int, Int>> = _wrongAnswers.asStateFlow()
+
     override suspend fun loadQuestions() {
         quizService.loadQuestions()
         updateQuestionCategories()
@@ -98,9 +102,23 @@ internal class EinburgerungstestViewModelImpl(
         persistence.selectedCategory = category
     }
 
-    override fun onAnswerSelected(answerIndex: Int) {
-        _selectedAnswerIndex.value = answerIndex
-        quizService.saveAnswer(answerIndex)
+    override fun onAnswerSelected(question: Question, selectedAnswer: Int) {
+        _selectedAnswerIndex.value = selectedAnswer
+        quizService.saveAnswer(selectedAnswer)
+
+        if (question.correctAnswer == selectedAnswer) {
+            val updated = _correctAnswers.updateAndGet {
+                val currentCount = it[question.id] ?: 0
+                it + (question.id to currentCount + 1)
+            }
+            persistence.correctAnswers = updated
+        } else {
+            val updated = _wrongAnswers.updateAndGet {
+                val currentCount = it[question.id] ?: 0
+                it + (question.id to currentCount + 1)
+            }
+            persistence.wrongAnswers = updated
+        }
     }
 
     override fun onNextQuestion() {
