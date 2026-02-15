@@ -26,7 +26,20 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.loadQuestions()
+    }
+
     when (uiState) {
+        UiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(MyBundle.message("einburgerungstest.tab.loading"))
+            }
+        }
+
         UiState.NotStarted -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -48,20 +61,12 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
             }
         }
 
-        UiState.Loading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(MyBundle.message("einburgerungstest.tab.loading"))
-            }
-        }
-
         UiState.QuestionShowing -> {
             val focusRequester = FocusRequester()
             LaunchedEffect(currentQuestionPair) {
                 focusRequester.requestFocus()
             }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

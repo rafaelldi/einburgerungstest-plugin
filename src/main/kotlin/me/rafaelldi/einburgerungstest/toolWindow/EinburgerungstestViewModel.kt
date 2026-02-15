@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.updateAndGet
-import kotlinx.coroutines.launch
 import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceService
 import me.rafaelldi.einburgerungstest.questions.Question
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
@@ -22,6 +21,7 @@ internal interface EinburgerungstestViewModel : Disposable {
     val canGoPrevious: StateFlow<Boolean>
     val favorites: StateFlow<List<Int>>
 
+    suspend fun loadQuestions()
     fun onStartQuiz()
     fun onCategoryChanged(category: QuestionCategory)
     fun onAnswerSelected(answerIndex: Int)
@@ -38,7 +38,7 @@ internal class EinburgerungstestViewModelImpl(
     private val persistence: QuestionPersistenceService
 ) : EinburgerungstestViewModel {
 
-    private val _uiState = MutableStateFlow<UiState>(UiState.NotStarted)
+    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     private val _selectedCategory = MutableStateFlow(persistence.selectedCategory)
@@ -56,16 +56,17 @@ internal class EinburgerungstestViewModelImpl(
     private val _favorites = MutableStateFlow(persistence.favorites)
     override val favorites: StateFlow<List<Int>> = _favorites.asStateFlow()
 
+    override suspend fun loadQuestions() {
+        quizService.loadQuestions()
+        _uiState.value = UiState.NotStarted
+    }
+
     override fun onStartQuiz() {
-        viewModelScope.launch {
-            _uiState.value = UiState.Loading
+        quizService.startQuiz(_selectedCategory.value)
+        val firstQuestion = quizService.nextQuestion()
+        _currentQuestion.value = firstQuestion
 
-            quizService.startQuiz(_selectedCategory.value)
-            val firstQuestion = quizService.nextQuestion()
-            _currentQuestion.value = firstQuestion
-
-            _uiState.value = UiState.QuestionShowing
-        }
+        _uiState.value = UiState.QuestionShowing
     }
 
     override fun onCategoryChanged(category: QuestionCategory) {
