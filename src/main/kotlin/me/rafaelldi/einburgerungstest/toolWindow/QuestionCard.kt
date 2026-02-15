@@ -133,7 +133,7 @@ internal fun QuestionCard(
                     .clickable(enabled = !isAnswered) { onAnswerSelected(index) }
                     .padding(12.dp)
             ) {
-                Text(text = answer)
+                Text(text = "${index + 1}. $answer")
             }
         }
 

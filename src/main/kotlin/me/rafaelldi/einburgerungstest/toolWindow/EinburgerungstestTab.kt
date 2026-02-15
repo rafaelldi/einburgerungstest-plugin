@@ -1,11 +1,16 @@
 package me.rafaelldi.einburgerungstest.toolWindow
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.dp
 import me.rafaelldi.einburgerungstest.MyBundle
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
@@ -53,10 +58,34 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
         }
 
         UiState.QuestionShowing -> {
+            val focusRequester = FocusRequester()
+            LaunchedEffect(currentQuestion) {
+                focusRequester.requestFocus()
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .onKeyEvent { event ->
+                        if (event.type == KeyEventType.KeyDown) {
+                            when (event.key) {
+                                Key.One -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(0); true } else false
+                                Key.Two -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(1); true } else false
+                                Key.Three -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(2); true } else false
+                                Key.Four -> if (selectedAnswerIndex == null) { viewModel.onAnswerSelected(3); true } else false
+                                Key.DirectionRight -> { viewModel.onNextQuestion(); true }
+                                Key.Enter -> { viewModel.onNextQuestion(); true }
+                                Key.Spacebar -> { viewModel.onNextQuestion(); true }
+                                Key.DirectionLeft -> if (canGoPrevious) { viewModel.onPreviousQuestion(); true } else false
+                                Key.Backspace -> if (canGoPrevious) { viewModel.onPreviousQuestion(); true } else false
+                                else -> false
+                            }
+                        } else {
+                            false
+                        }
+                    }
+                    .focusRequester(focusRequester)
+                    .focusable(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 currentQuestion?.let { question ->
