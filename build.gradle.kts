@@ -44,7 +44,7 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
     }
 
-    implementation(libs.serializationJson)
+    compileOnly(libs.serializationJson)
 
     testImplementation(libs.junit)
     testImplementation(libs.opentest4j)
