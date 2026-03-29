@@ -27,6 +27,7 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val canGoNext by viewModel.canGoNext.collectAsState()
     val canGoPrevious by viewModel.canGoPrevious.collectAsState()
     val selectedCategory by viewModel.selectedCategory.collectAsState()
+    val randomOrder by viewModel.randomOrder.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
     val correctAnswers by viewModel.correctAnswers.collectAsState()
     val wrongAnswers by viewModel.wrongAnswers.collectAsState()
@@ -62,6 +63,12 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                     )
                     DefaultButton(onClick = { viewModel.onStartQuiz() }) {
                         Text(MyBundle.message("einburgerungstest.tab.start.button"))
+                    }
+                    CheckboxRow(
+                        checked = randomOrder,
+                        onCheckedChange = { viewModel.onRandomOrderChanged(it) }
+                    ) {
+                        Text(MyBundle.message("einburgerungstest.tab.randomOrder.checkbox"))
                     }
                 }
             }

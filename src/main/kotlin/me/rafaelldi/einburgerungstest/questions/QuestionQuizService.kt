@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 internal interface QuestionQuizService {
     suspend fun loadQuestions()
     fun getQuestionCount(category: QuestionCategory): Int
-    fun startQuiz(category: QuestionCategory)
+    fun startQuiz(category: QuestionCategory, randomOrder: Boolean)
     fun hasNext(): Boolean
     fun nextQuestion(): Pair<Question, ImageBitmap?>?
     fun hasPrevious(): Boolean
@@ -35,8 +35,9 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
         return QuestionStoreServiceImpl.getInstance().getQuestionCount(category)
     }
 
-    override fun startQuiz(category: QuestionCategory) {
-        questionOrder = QuestionStoreServiceImpl.getInstance().getQuestionIds(category).shuffled()
+    override fun startQuiz(category: QuestionCategory, randomOrder: Boolean) {
+        val ids = QuestionStoreServiceImpl.getInstance().getQuestionIds(category)
+        questionOrder = if (randomOrder) ids.shuffled() else ids
         currentIndex = -1
         answerHistory.clear()
     }

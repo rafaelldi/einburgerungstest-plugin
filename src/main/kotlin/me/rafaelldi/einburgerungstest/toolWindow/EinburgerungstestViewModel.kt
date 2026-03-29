@@ -19,6 +19,7 @@ internal interface EinburgerungstestViewModel : Disposable {
     val selectedAnswerIndex: StateFlow<Int?>
     val canGoNext: StateFlow<Boolean>
     val canGoPrevious: StateFlow<Boolean>
+    val randomOrder: StateFlow<Boolean>
     val favorites: StateFlow<List<Int>>
     val correctAnswers: StateFlow<Map<Int, Int>>
     val wrongAnswers: StateFlow<Map<Int, Int>>
@@ -26,6 +27,7 @@ internal interface EinburgerungstestViewModel : Disposable {
     suspend fun loadQuestions()
     fun onStartQuiz()
     fun onCategoryChanged(category: QuestionCategory)
+    fun onRandomOrderChanged(randomOrder: Boolean)
     fun onAnswerSelected(question: Question, selectedAnswer: Int)
     fun onNextQuestion()
     fun onPreviousQuestion()
@@ -48,6 +50,9 @@ internal class EinburgerungstestViewModelImpl(
 
     private val _selectedCategory = MutableStateFlow(persistence.selectedCategory)
     override val selectedCategory: StateFlow<QuestionCategory> = _selectedCategory.asStateFlow()
+
+    private val _randomOrder = MutableStateFlow(persistence.randomOrder)
+    override val randomOrder: StateFlow<Boolean> = _randomOrder.asStateFlow()
 
     private val _currentQuestion = MutableStateFlow<Pair<Question, ImageBitmap?>?>(null)
     override val currentQuestion: StateFlow<Pair<Question, ImageBitmap?>?> = _currentQuestion.asStateFlow()
@@ -87,7 +92,7 @@ internal class EinburgerungstestViewModelImpl(
     }
 
     override fun onStartQuiz() {
-        quizService.startQuiz(_selectedCategory.value)
+        quizService.startQuiz(_selectedCategory.value, _randomOrder.value)
 
         val firstQuestion = quizService.nextQuestion() ?: return
 
@@ -100,6 +105,11 @@ internal class EinburgerungstestViewModelImpl(
     override fun onCategoryChanged(category: QuestionCategory) {
         _selectedCategory.value = category
         persistence.selectedCategory = category
+    }
+
+    override fun onRandomOrderChanged(randomOrder: Boolean) {
+        _randomOrder.value = randomOrder
+        persistence.randomOrder = randomOrder
     }
 
     override fun onAnswerSelected(question: Question, selectedAnswer: Int) {

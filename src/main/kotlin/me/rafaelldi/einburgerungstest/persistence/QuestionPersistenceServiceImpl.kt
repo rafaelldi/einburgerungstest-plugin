@@ -9,6 +9,7 @@ import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 
 internal interface QuestionPersistenceService {
     var selectedCategory: QuestionCategory
+    var randomOrder: Boolean
     var favorites: List<Int>
     var correctAnswers: Map<Int, Int>
     var wrongAnswers: Map<Int, Int>
@@ -29,6 +30,14 @@ internal class QuestionPersistenceServiceImpl :
         set(value) {
             updateState {
                 it.copy(selectedCategory = value)
+            }
+        }
+
+    override var randomOrder: Boolean
+        get() = state.randomOrder
+        set(value) {
+            updateState {
+                it.copy(randomOrder = value)
             }
         }
 
@@ -58,6 +67,7 @@ internal class QuestionPersistenceServiceImpl :
 
     internal data class QuestionPersistenceState(
         @JvmField @Property val selectedCategory: QuestionCategory = QuestionCategory.General,
+        @JvmField @Property val randomOrder: Boolean = true,
         @JvmField val favorites: List<Int> = emptyList(),
         @JvmField val correctAnswers: Map<Int, Int> = emptyMap(),
         @JvmField val wrongAnswers: Map<Int, Int> = emptyMap(),
