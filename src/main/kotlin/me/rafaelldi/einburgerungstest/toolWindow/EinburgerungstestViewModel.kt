@@ -115,6 +115,9 @@ internal class EinburgerungstestViewModelImpl(
         _currentQuestionIndex.value = quizService.getCurrentIndex()
         _totalQuestionCount.value = quizService.getTotalCount()
 
+        _correctAnswers.value = persistence.correctAnswers
+        _wrongAnswers.value = persistence.wrongAnswers
+
         _uiState.value = UiState.QuestionShowing
     }
 

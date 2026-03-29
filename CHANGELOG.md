@@ -8,6 +8,7 @@
 
 - A checkbox to disable the random question order
 - A progress bar to show the progress of the quiz
+- An action to reset quiz statistics
 
 ### Fixed
 

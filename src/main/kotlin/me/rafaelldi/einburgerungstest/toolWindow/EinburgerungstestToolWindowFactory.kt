@@ -1,5 +1,7 @@
 package me.rafaelldi.einburgerungstest.toolWindow
 
+import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.actionSystem.ex.ActionUtil
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
@@ -25,6 +27,9 @@ internal class EinburgerungstestToolWindowFactory : ToolWindowFactory, DumbAware
             questionPersistenceService
         )
         Disposer.register(toolWindow.disposable, viewModel)
+
+        @Suppress("UnstableApiUsage") val resetStatisticsAction = ActionUtil.getAction("ResetStatistics")
+        resetStatisticsAction?.let { toolWindow.setAdditionalGearActions(DefaultActionGroup(it)) }
 
         toolWindow.addComposeTab("", focusOnClickInside = true) {
             EinburgerungstestTab(viewModel)

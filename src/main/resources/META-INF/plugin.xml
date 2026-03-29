@@ -18,4 +18,8 @@
                     anchor="right"
                     doNotActivateOnStart="true"/>
     </extensions>
+
+    <actions>
+        <action id="ResetStatistics" class="me.rafaelldi.einburgerungstest.actions.ResetStatisticsAction"/>
+    </actions>
 </idea-plugin>
