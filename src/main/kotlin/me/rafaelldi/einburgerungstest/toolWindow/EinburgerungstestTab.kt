@@ -32,10 +32,6 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val correctAnswers by viewModel.correctAnswers.collectAsState()
     val wrongAnswers by viewModel.wrongAnswers.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadQuestions()
-    }
-
     when (uiState) {
         UiState.Loading -> {
             Box(

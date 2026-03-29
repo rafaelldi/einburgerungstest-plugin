@@ -5,6 +5,7 @@ import com.intellij.openapi.Disposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import me.rafaelldi.einburgerungstest.persistence.QuestionPersistenceService
 import me.rafaelldi.einburgerungstest.questions.Question
 import me.rafaelldi.einburgerungstest.questions.QuestionCategories
@@ -24,7 +25,6 @@ internal interface EinburgerungstestViewModel : Disposable {
     val correctAnswers: StateFlow<Map<Int, Int>>
     val wrongAnswers: StateFlow<Map<Int, Int>>
 
-    suspend fun loadQuestions()
     fun onStartQuiz()
     fun onCategoryChanged(category: QuestionCategory)
     fun onRandomOrderChanged(randomOrder: Boolean)
@@ -41,6 +41,12 @@ internal class EinburgerungstestViewModelImpl(
     private val quizService: QuestionQuizService,
     private val persistence: QuestionPersistenceService
 ) : EinburgerungstestViewModel {
+
+    init {
+        viewModelScope.launch {
+            loadQuestions()
+        }
+    }
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     override val uiState: StateFlow<UiState> = _uiState.asStateFlow()
@@ -75,7 +81,7 @@ internal class EinburgerungstestViewModelImpl(
     private val _wrongAnswers = MutableStateFlow(persistence.wrongAnswers)
     override val wrongAnswers: StateFlow<Map<Int, Int>> = _wrongAnswers.asStateFlow()
 
-    override suspend fun loadQuestions() {
+    private suspend fun loadQuestions() {
         quizService.loadQuestions()
         updateQuestionCategories()
         _uiState.value = UiState.NotStarted
