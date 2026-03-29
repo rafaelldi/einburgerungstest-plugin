@@ -29,6 +29,8 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
     val selectedCategory by viewModel.selectedCategory.collectAsState()
     val randomOrder by viewModel.randomOrder.collectAsState()
     val favorites by viewModel.favorites.collectAsState()
+    val currentQuestionIndex by viewModel.currentQuestionIndex.collectAsState()
+    val totalQuestionCount by viewModel.totalQuestionCount.collectAsState()
     val correctAnswers by viewModel.correctAnswers.collectAsState()
     val wrongAnswers by viewModel.wrongAnswers.collectAsState()
 
@@ -161,6 +163,20 @@ internal fun EinburgerungstestTab(viewModel: EinburgerungstestViewModel) {
                             enabled = canGoNext
                         ) {
                             Text(MyBundle.message("einburgerungstest.tab.next.button"))
+                        }
+                    }
+
+                    if (totalQuestionCount > 0) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            HorizontalProgressBar(
+                                progress = (currentQuestionIndex + 1).toFloat() / totalQuestionCount.toFloat(),
+                                modifier = Modifier.weight(1f)
+                            )
+                            Text("${currentQuestionIndex + 1}/$totalQuestionCount")
                         }
                     }
                 }

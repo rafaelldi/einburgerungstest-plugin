@@ -22,6 +22,8 @@ internal interface EinburgerungstestViewModel : Disposable {
     val canGoPrevious: StateFlow<Boolean>
     val randomOrder: StateFlow<Boolean>
     val favorites: StateFlow<List<Int>>
+    val currentQuestionIndex: StateFlow<Int>
+    val totalQuestionCount: StateFlow<Int>
     val correctAnswers: StateFlow<Map<Int, Int>>
     val wrongAnswers: StateFlow<Map<Int, Int>>
 
@@ -75,6 +77,12 @@ internal class EinburgerungstestViewModelImpl(
     private val _favorites = MutableStateFlow(persistence.favorites)
     override val favorites: StateFlow<List<Int>> = _favorites.asStateFlow()
 
+    private val _currentQuestionIndex = MutableStateFlow(0)
+    override val currentQuestionIndex: StateFlow<Int> = _currentQuestionIndex.asStateFlow()
+
+    private val _totalQuestionCount = MutableStateFlow(0)
+    override val totalQuestionCount: StateFlow<Int> = _totalQuestionCount.asStateFlow()
+
     private val _correctAnswers = MutableStateFlow(persistence.correctAnswers)
     override val correctAnswers: StateFlow<Map<Int, Int>> = _correctAnswers.asStateFlow()
 
@@ -104,6 +112,8 @@ internal class EinburgerungstestViewModelImpl(
 
         _currentQuestion.value = firstQuestion
         _canGoNext.value = quizService.hasNext()
+        _currentQuestionIndex.value = quizService.getCurrentIndex()
+        _totalQuestionCount.value = quizService.getTotalCount()
 
         _uiState.value = UiState.QuestionShowing
     }
@@ -144,6 +154,7 @@ internal class EinburgerungstestViewModelImpl(
         _selectedAnswerIndex.value = quizService.getSavedAnswer()
         _canGoPrevious.value = quizService.hasPrevious()
         _canGoNext.value = quizService.hasNext()
+        _currentQuestionIndex.value = quizService.getCurrentIndex()
     }
 
     override fun onPreviousQuestion() {
@@ -153,6 +164,7 @@ internal class EinburgerungstestViewModelImpl(
         _selectedAnswerIndex.value = quizService.getSavedAnswer()
         _canGoPrevious.value = quizService.hasPrevious()
         _canGoNext.value = quizService.hasNext()
+        _currentQuestionIndex.value = quizService.getCurrentIndex()
     }
 
     override fun onResetQuiz() {
@@ -161,6 +173,8 @@ internal class EinburgerungstestViewModelImpl(
         _selectedAnswerIndex.value = null
         _canGoPrevious.value = false
         _canGoNext.value = true
+        _currentQuestionIndex.value = 0
+        _totalQuestionCount.value = 0
     }
 
     override fun onToggleFavorite(questionId: Int) {

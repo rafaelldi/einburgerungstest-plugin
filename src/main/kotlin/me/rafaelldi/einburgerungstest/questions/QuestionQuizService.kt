@@ -13,6 +13,8 @@ internal interface QuestionQuizService {
     fun nextQuestion(): Pair<Question, ImageBitmap?>?
     fun hasPrevious(): Boolean
     fun previousQuestion(): Pair<Question, ImageBitmap?>?
+    fun getCurrentIndex(): Int
+    fun getTotalCount(): Int
     fun getSavedAnswer(): Int?
     fun saveAnswer(answerIndex: Int)
 }
@@ -63,6 +65,10 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
         val questionId = questionOrder[currentIndex]
         return QuestionStoreServiceImpl.getInstance().getQuestion(questionId)
     }
+
+    override fun getCurrentIndex(): Int = currentIndex
+
+    override fun getTotalCount(): Int = questionOrder.size
 
     override fun getSavedAnswer(): Int? {
         return answerHistory[currentIndex]
