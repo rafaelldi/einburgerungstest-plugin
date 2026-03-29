@@ -6,6 +6,17 @@
 
 ### Added
 
+- A checkbox to disable the random question order
+- A progress bar to show the progress of the quiz
+
+### Fixed
+
+- Do not restart the quiz on the tool window hide
+
+## [1.2.0] - 2026-02-15
+
+### Added
+
 - Show question images
 - Keyboard navigation
 - Show the number of questions in each category
