@@ -4,6 +4,7 @@ import com.intellij.openapi.components.SerializablePersistentStateComponent
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.State
 import com.intellij.openapi.components.Storage
+import com.intellij.util.xmlb.annotations.Property
 import me.rafaelldi.einburgerungstest.questions.QuestionCategory
 
 internal interface QuestionPersistenceService {
@@ -56,7 +57,7 @@ internal class QuestionPersistenceServiceImpl :
         }
 
     internal data class QuestionPersistenceState(
-        @JvmField val selectedCategory: QuestionCategory = QuestionCategory.General,
+        @JvmField @Property val selectedCategory: QuestionCategory = QuestionCategory.General,
         @JvmField val favorites: List<Int> = emptyList(),
         @JvmField val correctAnswers: Map<Int, Int> = emptyMap(),
         @JvmField val wrongAnswers: Map<Int, Int> = emptyMap(),
