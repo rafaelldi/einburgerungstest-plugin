@@ -23,9 +23,7 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
         fun getInstance(project: Project): QuestionQuizServiceImpl = project.service()
     }
 
-    private var currentCategory: QuestionCategory = QuestionCategory.General
-    private val questionHistory: MutableList<Pair<Question, ImageBitmap?>> = mutableListOf()
-    private val shownQuestionIds: MutableSet<Int> = mutableSetOf()
+    private var questionOrder: List<Int> = emptyList()
     private var currentIndex: Int = -1
     private val answerHistory: MutableMap<Int, Int> = mutableMapOf()
 
@@ -38,33 +36,20 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
     }
 
     override fun startQuiz(category: QuestionCategory) {
-        currentCategory = category
-        questionHistory.clear()
+        questionOrder = QuestionStoreServiceImpl.getInstance().getQuestionIds(category).shuffled()
         currentIndex = -1
         answerHistory.clear()
-        shownQuestionIds.clear()
     }
 
     override fun hasNext(): Boolean {
-        if (currentIndex < questionHistory.size - 1) return true
-        return shownQuestionIds.size < getQuestionCount(currentCategory)
+        return currentIndex < questionOrder.size - 1
     }
 
     override fun nextQuestion(): Pair<Question, ImageBitmap?>? {
-        if (currentIndex < questionHistory.size - 1) {
-            currentIndex++
-        } else {
-            val newQuestion = QuestionStoreServiceImpl
-                .getInstance()
-                .getRandomQuestion(currentCategory, shownQuestionIds)
-                ?: return null
-
-            shownQuestionIds.add(newQuestion.first.id)
-            questionHistory.add(newQuestion)
-            currentIndex++
-        }
-
-        return questionHistory[currentIndex]
+        if (!hasNext()) return null
+        currentIndex++
+        val questionId = questionOrder[currentIndex]
+        return QuestionStoreServiceImpl.getInstance().getQuestion(questionId)
     }
 
     override fun hasPrevious(): Boolean {
@@ -72,10 +57,10 @@ internal class QuestionQuizServiceImpl : QuestionQuizService {
     }
 
     override fun previousQuestion(): Pair<Question, ImageBitmap?>? {
-        if (currentIndex <= 0) return null
+        if (!hasPrevious()) return null
         currentIndex--
-
-        return questionHistory[currentIndex]
+        val questionId = questionOrder[currentIndex]
+        return QuestionStoreServiceImpl.getInstance().getQuestion(questionId)
     }
 
     override fun getSavedAnswer(): Int? {

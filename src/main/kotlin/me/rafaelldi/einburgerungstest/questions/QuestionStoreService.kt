@@ -16,8 +16,8 @@ import org.jetbrains.skia.Image as SkiaImage
 internal interface QuestionStoreService {
     suspend fun loadQuestions()
     fun getQuestionCount(category: QuestionCategory): Int
-    fun getRandomQuestion(category: QuestionCategory): Pair<Question, ImageBitmap?>
-    fun getRandomQuestion(category: QuestionCategory, excludeIds: Set<Int>): Pair<Question, ImageBitmap?>?
+    fun getQuestionIds(category: QuestionCategory): List<Int>
+    fun getQuestion(id: Int): Pair<Question, ImageBitmap?>?
 }
 
 @Service(Service.Level.APP)
@@ -65,49 +65,31 @@ internal class QuestionStoreServiceImpl : QuestionStoreService {
     }
 
     override fun getQuestionCount(category: QuestionCategory): Int {
+        if (category == QuestionCategory.Favorites) {
+            return service<QuestionPersistenceServiceImpl>().favorites.size
+        }
         return when (category) {
             QuestionCategory.All -> questionsById.size
             QuestionCategory.General -> generalQuestions.size
-            QuestionCategory.Favorites -> service<QuestionPersistenceServiceImpl>().favorites.size
             else -> questionsByCategory[category]?.size ?: 0
         }
     }
 
-    override fun getRandomQuestion(category: QuestionCategory): Pair<Question, ImageBitmap?> {
+    override fun getQuestionIds(category: QuestionCategory): List<Int> {
         if (category == QuestionCategory.Favorites) {
-            val favoriteQuestionId = service<QuestionPersistenceServiceImpl>().favorites.randomOrNull()
-            val question = favoriteQuestionId?.let { questionsById[it] } ?: questionsById.values.random()
-            return withImage(question)
+            return service<QuestionPersistenceServiceImpl>().favorites.toList()
         }
-
-        if (category == QuestionCategory.All) {
-            return withImage(questionsById.values.random())
-        }
-
-        if (category == QuestionCategory.General) {
-            return withImage(generalQuestions.random())
-        }
-
-        return withImage(requireNotNull(questionsByCategory[category]).random())
-    }
-
-    override fun getRandomQuestion(category: QuestionCategory, excludeIds: Set<Int>): Pair<Question, ImageBitmap?>? {
-        if (category == QuestionCategory.Favorites) {
-            val favoriteIds = service<QuestionPersistenceServiceImpl>().favorites
-            val remaining = favoriteIds.filter { it !in excludeIds }
-            val question = remaining.randomOrNull()?.let { questionsById[it] } ?: return null
-            return withImage(question)
-        }
-
-        val pool = when (category) {
+        val questions = when (category) {
             QuestionCategory.All -> questionsById.values
             QuestionCategory.General -> generalQuestions
-            else -> questionsByCategory[category] ?: return null
+            else -> questionsByCategory[category] ?: emptyList()
         }
+        return questions.map { it.id }
+    }
 
-        val remaining = pool.filter { it.id !in excludeIds }
-        if (remaining.isEmpty()) return null
-        return withImage(remaining.random())
+    override fun getQuestion(id: Int): Pair<Question, ImageBitmap?>? {
+        val question = questionsById[id] ?: return null
+        return withImage(question)
     }
 
     private fun loadImage(resourcePath: String): ImageBitmap? {
