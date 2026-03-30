@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-30
+
 ### Added
 
 - A checkbox to disable the random question order
@@ -39,3 +41,9 @@
 ### Added
 
 - Initial release
+
+[Unreleased]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.1.0...v1.2.0
+[1.1.0]: https://github.com/rafaelldi/einburgerungstest-plugin/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/rafaelldi/einburgerungstest-plugin/commits/v1.0.0
